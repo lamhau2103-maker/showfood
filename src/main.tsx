@@ -38,6 +38,7 @@ export interface FeedBagLook {
   name: string;
   img640: string;
   img1080: string;
+  offsetY?: number;
   pieces: string;
   qualityStd: string;
   specs: [BagSpecItem, BagSpecItem, BagSpecItem];
@@ -221,6 +222,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       name: 'Cám 414 — Heo Choai (15–30kg)',
       img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp',
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp',
+      offsetY: 0,
       pieces: '3 chỉ tiêu',
       qualityStd: 'TCVN 1547 · ISO 22000',
       specs: [
@@ -236,6 +238,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       name: 'Cám 415 — Heo Thịt Phát Triển (30–60kg)',
       img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp',
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-5.webp',
+      offsetY: 0,
       pieces: '3 chỉ tiêu',
       qualityStd: 'TCVN 1547 · ISO 22000',
       specs: [
@@ -251,6 +254,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       name: 'Cám 418 — Heo Xuất Chuồng (60kg–Bán)',
       img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp',
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-4.webp',
+      offsetY: 0,
       pieces: '3 chỉ tiêu',
       qualityStd: 'TCVN 1547 · ISO 22000',
       specs: [
@@ -266,6 +270,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       name: 'Cám 412 — Heo Con Tập Ăn (7–15kg)',
       img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp',
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-6.webp',
+      offsetY: 0,
       pieces: '3 chỉ tiêu',
       qualityStd: 'TCVN 1547 · ISO 22000',
       specs: [
@@ -281,6 +286,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       name: 'Cám 416 — Heo Nái Mang Thai',
       img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp',
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-3.webp',
+      offsetY: 0,
       pieces: '3 chỉ tiêu',
       qualityStd: 'TCVN 1547 · ISO 22000',
       specs: [
@@ -296,6 +302,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       name: 'Cám 420 — Heo Nái Nuôi Con & Tiết Sữa',
       img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp',
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-2.webp',
+      offsetY: 0,
       pieces: '3 chỉ tiêu',
       qualityStd: 'TCVN 1547 · ISO 22000',
       specs: [
@@ -553,6 +560,7 @@ export class RunwaySection extends HTMLElement {
         model.dataset.index = String(i);
         model.dataset.lookKey = look.key || `look_${i}`;
         model.style.setProperty('--rw-ar', '0.5625');
+        model.style.setProperty('--rw-offset-y', `${look.offsetY ?? 0}%`);
         model.innerHTML = `
           <div class="rw__model-inner">
             <span class="rw__ground" aria-hidden="true"></span>
@@ -573,6 +581,7 @@ export class RunwaySection extends HTMLElement {
         clone.dataset.index = String(i);
         clone.dataset.lookKey = `${look.key || 'look'}_clone`;
         clone.style.setProperty('--rw-ar', '0.5625');
+        clone.style.setProperty('--rw-offset-y', `${look.offsetY ?? 0}%`);
         clone.innerHTML = `
           <div class="rw__model-inner">
             <span class="rw__ground" aria-hidden="true"></span>
@@ -598,6 +607,7 @@ export class RunwaySection extends HTMLElement {
         hero.dataset.name = look.name;
         hero.dataset.probe = look.img640;
         hero.style.setProperty('--rw-ar', '0.5625');
+        hero.style.setProperty('--rw-offset-y', `${look.offsetY ?? 0}%`);
 
         const pinsHtml = look.specs
           .map((sp, pIdx) => {
@@ -607,7 +617,7 @@ export class RunwaySection extends HTMLElement {
           .join('');
 
         hero.innerHTML = `
-          <figure class="rw__figure" data-rw-figure>
+          <figure class="rw__figure" data-rw-figure style="--rw-offset-y:${look.offsetY ?? 0}%">
             <span class="rw__ground" aria-hidden="true"></span>
             <img src="${escapeAttr(look.img640)}" srcset="${escapeAttr(look.img640)} 640w, ${escapeAttr(look.img1080 || look.img640)} 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="${escapeAttr(look.name)}">
             ${pinsHtml}
@@ -718,8 +728,10 @@ export class RunwaySection extends HTMLElement {
         const origBody = this.bodies[index];
         const cloneBody = this.bodies[index + this.N];
         const hero = this.heroes[index];
+        const offY = `${this.looks[index]?.offsetY ?? 0}%`;
         [origBody, cloneBody, hero].forEach((el) => {
           el?.style.setProperty('--rw-foot', footPct);
+          el?.style.setProperty('--rw-offset-y', offY);
         });
       } catch {
         // Fallback if canvas is tainted
@@ -1412,7 +1424,26 @@ class AdminCmsController {
     if (stdInput) stdInput.value = look.qualityStd;
     if (img640Input) img640Input.value = look.img640;
     if (img1080Input) img1080Input.value = look.img1080;
-    if (previewImg) previewImg.src = look.img640;
+
+    const offsetY = look.offsetY ?? 0;
+    const offsetSlider = document.getElementById('admin-offset-slider') as HTMLInputElement | null;
+    const offsetBadge = document.getElementById('admin-offset-val-badge');
+    if (offsetSlider) offsetSlider.value = String(offsetY);
+    if (offsetBadge) {
+      if (offsetY < 0) {
+        offsetBadge.textContent = `${offsetY}% (Nâng lên ${Math.abs(offsetY)}%)`;
+      } else if (offsetY > 0) {
+        offsetBadge.textContent = `+${offsetY}% (Hạ xuống ${offsetY}%)`;
+      } else {
+        offsetBadge.textContent = '0% (Chuẩn)';
+      }
+    }
+
+    if (previewImg) {
+      previewImg.src = look.img640;
+      previewImg.style.setProperty('--admin-preview-offset-y', `${offsetY}%`);
+      previewImg.style.transform = `translateY(${offsetY}%)`;
+    }
 
     if (!this.specsContainerEl) return;
     this.specsContainerEl.innerHTML = '';
@@ -1502,6 +1533,11 @@ class AdminCmsController {
       look.img1080 = img1080Input.value.trim();
     } else {
       look.img1080 = look.img640;
+    }
+
+    const offsetSlider = document.getElementById('admin-offset-slider') as HTMLInputElement | null;
+    if (offsetSlider) {
+      look.offsetY = parseFloat(offsetSlider.value) || 0;
     }
 
     if (!this.specsContainerEl) return;
@@ -1839,6 +1875,7 @@ class AdminCmsController {
         name: `Cám ${nextCode} — Dòng Chăn Nuôi Mới`,
         img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp',
         img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp',
+        offsetY: 0,
         pieces: '3 chỉ tiêu',
         qualityStd: 'TCVN 1547 · ISO 22000',
         specs: [
@@ -1924,6 +1961,49 @@ class AdminCmsController {
         }
         showToast('Đã tải ảnh bao bì — bấm "Lưu & Áp Dụng Thay Đổi" để cập nhật');
       });
+    });
+
+    // Real-time Vertical Offset Tuning (Lên / Xuống)
+    const offsetSlider = document.getElementById('admin-offset-slider') as HTMLInputElement | null;
+    const offsetBadge = document.getElementById('admin-offset-val-badge');
+
+    const applyOffsetVal = (val: number) => {
+      const clamped = clamp(Math.round(val * 2) / 2, -30, 30);
+      const look = this.workingLooks[this.selectedSlot];
+      if (look) look.offsetY = clamped;
+      if (offsetSlider) offsetSlider.value = String(clamped);
+      if (offsetBadge) {
+        if (clamped < 0) {
+          offsetBadge.textContent = `${clamped}% (Nâng lên ${Math.abs(clamped)}%)`;
+        } else if (clamped > 0) {
+          offsetBadge.textContent = `+${clamped}% (Hạ xuống ${clamped}%)`;
+        } else {
+          offsetBadge.textContent = '0% (Chuẩn)';
+        }
+      }
+      const previewImg = document.getElementById('admin-bag-preview-img') as HTMLImageElement | null;
+      if (previewImg) {
+        previewImg.style.setProperty('--admin-preview-offset-y', `${clamped}%`);
+        previewImg.style.transform = `translateY(${clamped}%)`;
+      }
+    };
+
+    offsetSlider?.addEventListener('input', () => {
+      applyOffsetVal(parseFloat(offsetSlider.value) || 0);
+    });
+
+    document.getElementById('admin-offset-up')?.addEventListener('click', () => {
+      const cur = parseFloat(offsetSlider?.value || '0') || 0;
+      applyOffsetVal(cur - 1);
+    });
+
+    document.getElementById('admin-offset-down')?.addEventListener('click', () => {
+      const cur = parseFloat(offsetSlider?.value || '0') || 0;
+      applyOffsetVal(cur + 1);
+    });
+
+    document.getElementById('admin-offset-reset')?.addEventListener('click', () => {
+      applyOffsetVal(0);
     });
 
     // Save & Apply Changes

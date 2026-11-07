@@ -326,7 +326,7 @@
       user-select: none;
       -webkit-user-drag: none;
       opacity: 0;
-      transform: translateY(var(--rw-foot, 0%));
+      transform: translateY(calc(var(--rw-foot, 0%) + var(--rw-offset-y, 0%)));
       filter: drop-shadow(0 14px 24px rgba(21, 20, 19, 0.08));
     }
 
@@ -370,14 +370,14 @@
       pointer-events: auto;
       cursor: pointer;
       opacity: 0;
-      transform: scale(0.4);
+      transform: translateY(calc(var(--rw-foot, 0%) + var(--rw-offset-y, 0%))) scale(0.4);
       transition: transform 0.45s var(--rw-ease-spring), opacity 0.35s var(--rw-ease);
       transition-delay: calc(var(--rw-pin-base, 0.15s) + var(--pin-i, 0) * 0.07s);
     }
 
     .rw__lb.is-open .rw__pin {
       opacity: 1;
-      transform: scale(1);
+      transform: translateY(calc(var(--rw-foot, 0%) + var(--rw-offset-y, 0%))) scale(1);
     }
 
     .rw__pin-dot {
@@ -1264,10 +1264,32 @@
       overflow: hidden;
     }
 
+    .admin-bag-preview::after {
+      content: 'Mặt sàn tham chiếu';
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      right: 14px;
+      border-bottom: 1.5px dashed #a8a29e;
+      font-size: 9px;
+      color: #a8a29e;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: right;
+      padding-bottom: 2px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
     .admin-bag-preview img {
+      position: relative;
+      z-index: 1;
       max-width: 90%;
       max-height: 90%;
       object-fit: contain;
+      transform: translateY(var(--admin-preview-offset-y, 0%));
+      transition: transform 0.08s ease-out;
     }
 
     .admin-specs-grid {
@@ -1818,6 +1840,33 @@
               <div class="admin-bag-preview" id="admin-bag-preview-box" title="Nhấp chuột vào ảnh bao cám để kiểm tra vị trí điểm pin">
                 <img id="admin-bag-preview-img" src="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" alt="Xem trước mẫu bao cám">
               </div>
+              <!-- Tinh chỉnh vị trí Lên / Xuống -->
+              <div class="admin-offset-card" style="margin-top: 10px; background: #fafaf9; border: 1px solid #e7e5e4; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 11px; font-weight: 700; color: #151413; text-transform: uppercase; letter-spacing: 0.04em;">Vị Trí Lên / Xuống</span>
+                  <span id="admin-offset-val-badge" style="font-size: 11px; font-weight: 600; color: #151413; background: #e7e5e4; padding: 2px 7px; border-radius: 4px; font-variant-numeric: tabular-nums;">0% (Chuẩn)</span>
+                </div>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <button type="button" class="btn-outline" id="admin-offset-up" title="Nâng sản phẩm lên trên (khi hình tải lên bị thấp)" style="flex: 1; padding: 6px 8px; font-size: 11px; font-weight: 600; text-align: center;">
+                    ▲ Nâng Lên
+                  </button>
+                  <button type="button" class="btn-outline" id="admin-offset-down" title="Hạ sản phẩm xuống dưới" style="flex: 1; padding: 6px 8px; font-size: 11px; font-weight: 600; text-align: center;">
+                    ▼ Hạ Xuống
+                  </button>
+                  <button type="button" class="btn-outline" id="admin-offset-reset" title="Đặt lại vị trí 0%" style="padding: 6px 10px; font-size: 11px; color: #66625c;">
+                    Đặt Lại
+                  </button>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 10px; color: #78716c; font-weight: 600;">-30%</span>
+                  <input type="range" id="admin-offset-slider" min="-30" max="30" step="0.5" value="0" style="flex: 1; cursor: pointer; accent-color: #151413;">
+                  <span style="font-size: 10px; color: #78716c; font-weight: 600;">+30%</span>
+                </div>
+                <p style="margin: 0; font-size: 10px; color: #78716c; line-height: 1.35;">
+                  Bấm <strong>▲ Nâng Lên</strong> nếu ảnh bao bì tải lên bị thấp hoặc chìm sàn. Kích thước chuẩn bao bì được giữ nguyên.
+                </p>
+              </div>
+
               <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
                 <label class="btn-outline" style="text-align: center; cursor: pointer; display: block;">
                   Tải File Bao Cám (PNG/WebP)
