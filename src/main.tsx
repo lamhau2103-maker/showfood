@@ -636,9 +636,8 @@ export class RunwaySection extends HTMLElement {
         tick.setAttribute('role', 'tab');
         tick.dataset.rwTick = String(i);
         tick.setAttribute('aria-selected', isAct ? 'true' : 'false');
-        const numPrefix = String(i + 1).padStart(2, '0');
         tick.innerHTML = `
-          <span class="rw__tick-num" data-rw-tick-label="${i}">${numPrefix}&nbsp;&nbsp;${escapeHtml(look.name)}</span>
+          <span class="rw__tick-num" data-rw-tick-label="${i}">${escapeHtml(look.name)}</span>
           <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
         `;
         tick.addEventListener('click', () => {
@@ -769,7 +768,6 @@ export class RunwaySection extends HTMLElement {
       panel.innerHTML = `
         <div class="rw__mhead">
           <span class="rw__mhead-title" data-rw-mtitle>${escapeHtml(look.name)}</span>
-          <span class="rw__mhead-count">${escapeHtml(look.pieces)}</span>
         </div>
         <ul class="rw__items" role="list">${itemsHtml}</ul>
         <div class="rw__bundle has-rule">
@@ -878,14 +876,13 @@ export class RunwaySection extends HTMLElement {
     const activeLook = this.looks[wrapped];
     if (activeLook) {
       if (this.piecesLabelEl) {
-        this.piecesLabelEl.textContent = activeLook.pieces;
+        this.piecesLabelEl.textContent = '';
       }
       if (this.liveRegion) {
-        this.liveRegion.textContent = `Bao cám ${wrapped + 1}: ${activeLook.name}`;
+        this.liveRegion.textContent = activeLook.name;
       }
       if (this.lbKickerEl) {
-        const word = this.lbEl?.dataset.word || 'Công thức';
-        this.lbKickerEl.textContent = `${word} ${String(wrapped + 1).padStart(2, '0')}`;
+        this.lbKickerEl.textContent = 'Công thức';
       }
       if (this.lbTitleEl) {
         this.lbTitleEl.textContent = activeLook.name;
@@ -946,9 +943,8 @@ export class RunwaySection extends HTMLElement {
     this.activeLbHero = hero;
     this.activeLbFigure = fig;
 
-    const word = this.lbEl.dataset.word || 'Công thức';
     if (this.lbKickerEl) {
-      this.lbKickerEl.textContent = `${word} ${String(this.activeIndex + 1).padStart(2, '0')}`;
+      this.lbKickerEl.textContent = 'Công thức';
     }
     if (this.lbTitleEl) {
       this.lbTitleEl.textContent = this.looks[this.activeIndex]?.name || '';
@@ -1381,8 +1377,7 @@ class AdminCmsController {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = `admin-tab${idx === this.selectedSlot ? ' is-active' : ''}`;
-      const num = String(idx + 1).padStart(2, '0');
-      btn.textContent = `${num}: ${look.name}`;
+      btn.textContent = look.name;
       btn.addEventListener('click', () => {
         this.commitCurrentSlotInputs();
         this.selectedSlot = idx;
@@ -1444,10 +1439,6 @@ class AdminCmsController {
         <div class="admin-field">
           <label>Dòng ghi chú kỹ thuật / Cam kết (.rw__price)</label>
           <input type="text" data-spec-field="specNote" data-spec-idx="${sIdx}" value="${escapeAttr(spec.specNote)}">
-        </div>
-        <div class="admin-field">
-          <label>Huy hiệu nổi bật (ví dụ "Mới" hoặc để trống)</label>
-          <input type="text" data-spec-field="tag" data-spec-idx="${sIdx}" value="${escapeAttr(spec.tag)}">
         </div>
         <div class="admin-field">
           <label>Đường dẫn ảnh thu nhỏ (URL / DataURL)</label>
@@ -1931,34 +1922,7 @@ class AdminCmsController {
           look.img640 = dataUrl;
           look.img1080 = dataUrl;
         }
-        showToast('Đã tải ảnh bao bì — bấm "Tạo Mẫu Bao Bì PP Dệt 25kg" để tạo hình nổi 3D');
-      });
-    });
-
-    // Generate 25kg Woven PP Cut-out button (transforms uploaded image to 3D standing sack without altering packaging content)
-    document.getElementById('admin-generate-bag-svg')?.addEventListener('click', () => {
-      this.commitCurrentSlotInputs();
-      const previewImg = document.getElementById('admin-bag-preview-img') as HTMLImageElement | null;
-      const i640 = document.getElementById('admin-bag-img-640') as HTMLInputElement | null;
-      const currentSrc = previewImg?.src || i640?.value || this.workingLooks[this.selectedSlot]?.img640;
-
-      if (!currentSrc) {
-        showToast('Vui lòng tải lên ảnh bao bì trước');
-        return;
-      }
-
-      showToast('Đang tạo hình nổi 3D cho bao bì...');
-      this.generate3dWovenPpBagCutout(currentSrc, (dataUrl) => {
-        if (i640) i640.value = dataUrl;
-        const i1080 = document.getElementById('admin-bag-img-1080') as HTMLInputElement | null;
-        if (i1080) i1080.value = dataUrl;
-        if (previewImg) previewImg.src = dataUrl;
-        const look = this.workingLooks[this.selectedSlot];
-        if (look) {
-          look.img640 = dataUrl;
-          look.img1080 = dataUrl;
-        }
-        showToast('Đã chuyển đổi bao bì thành hình nổi 3D — bấm "Lưu & Áp Dụng Thay Đổi"');
+        showToast('Đã tải ảnh bao bì — bấm "Lưu & Áp Dụng Thay Đổi" để cập nhật');
       });
     });
 
