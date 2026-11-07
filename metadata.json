@@ -1,0 +1,6 @@
+{
+  "name": "Thái Việt Corporation — Danh Mục Công Thức Thức Ăn Chăn Nuôi",
+  "description": "Sáu công thức thức ăn chăn nuôi chuẩn xác từ Thái Việt Corporation, thiết kế cho từng giai đoạn sinh trưởng tối ưu. Trải nghiệm không gian 3D tương tác và khám phá chi tiết thành phần dinh dưỡng.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

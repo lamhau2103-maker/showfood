@@ -1,0 +1,352 @@
+# Feed the Herd. — Product Showcase & Admin CMS: Exact Recreation Prompt
+
+Build a single page that recreates a high-end 3D "runway" product showcase section called "Feed the Herd." for a factory livestock feed reference catalog. Six full-size 25kg livestock feed bags (featuring flagship codes **414**, **415**, **418**, alongside **412**, **416**, and **420**) stand on a clean white stage, arranged in depth on a turning 3D ring with blurred outer bags. The carousel advances every 5 seconds, with a 01–06 progress bar, arrows, and a pause button. It has a custom "Drag / View" cursor and a "View bag" popup with numbered specification pins on the packaging.
+
+This page is a **purely informational product showcase (no pricing displayed)**. A right-hand "In this formula" panel lists the 3 core specification pillars (**Target Livestock**, **Suitable Age & Weight**, and **Nutritional Composition**) with plus buttons and technical parameter pickers (Pellet Diameter, Packaging Tier, Formula Premix), ending with a "Factory Quality Standard" summary and a "Save full formula to shortlist" button. A local "product shortlist" dialog keeps the selected reference specs for export.
+
+Additionally, include a **Password-Protected Admin CMS Modal (`ID: admin`, `Password: adminsale`)** accessible from the header. Once authenticated, the Admin can dynamically change any feed bag's packaging image (via image URL or local file upload converted to Data URL), edit bag names, pin coordinates, and customize all 3 specification pillars (Target Livestock, Suitable Age, Nutritional Composition). All Admin changes save to `localStorage` and immediately re-render the 3D stage, clones, heroes, and specification panels without losing the 3D physics.
+
+Write plain HTML, CSS, and vanilla JavaScript with no frameworks. The section is a custom element `<runway-section>` defined with `customElements.define`. Every number in this brief comes from the final source and must be used as given.
+
+---
+
+## 1. Page basics
+
+- `<html lang="en">`, `<meta charset="utf-8">`, `<meta name="viewport" content="width=device-width,initial-scale=1">`, `<meta name="theme-color" content="#ffffff">`.
+- Title: `Feed the Herd — Livestock Feed Reference Showcase`.
+- Meta description: `Six precision livestock feed formulas, engineered for peak growth. Explore the 3D showcase, isolate a feed bag, and tap a pin to inspect the specs.`
+- Preload the first feed bag image: `<link rel="preload" as="image" href="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" fetchpriority="high">`.
+- Global reset: `* {box-sizing:border-box}`. `html, body` have margin 0, padding 0, max-width 100%, font-family `Helvetica, Arial, sans-serif`, colour `#151413` and background `#fff`. `body` has `overflow-x:hidden`. Buttons, inputs and selects use `font: inherit`. Links have `color: inherit` and no underline. Buttons have `color: inherit`. Buttons and links have `-webkit-tap-highlight-color: transparent`. `button:focus-visible` and `a:focus-visible` get `outline: 2px solid #151413; outline-offset: 4px`. `[hidden]` is `display:none !important`. `:root` has `color-scheme: light`.
+- Root theme variables (mirroring Shopify Horizon tokens): `--font-body--family: Helvetica,Arial,sans-serif`, `--font-body--weight: 400`, `--font-heading--family: Helvetica,Arial,sans-serif`, `--font-heading--weight: 400`, `--color-primary-button-background: #151413`, `--color-primary-button-text: #fff`, `--style-border-radius-buttons-primary: 0px`.
+- Document order inside `<body>`:
+  1. `<header class="site-header shopify-section-group-header-group">`. The class name `shopify-section-group-header-group` matters because the script measures it to fit the section under the header.
+  2. `<main>` holding the `<runway-section>`.
+  3. `<dialog id="bag-dialog">`, the product specification shortlist.
+  4. `<dialog id="admin-dialog">`, the password-protected Admin CMS modal (`admin` / `adminsale`).
+  5. `<div id="bag-status" role="status" aria-live="polite">`, the toast.
+  6. The script (deferred).
+
+### 1.1 Site header
+
+- Height 88px, padding `0 40px`, flex row, `align-items:center`, gap 32px, `border-bottom: 1px solid #e4e4e4`, background `#fff`, `position:relative`, z-index 50.
+- Brand link `<a href="./" class="brand" aria-label="Feed Mill home">` with `margin-right:auto`, inline-flex. It holds `<img>` of the brand mark (`https://reel-ref-try-the-look.vercel.app/assets/nike-logo.svg`) with `width=68 height=24 alt="AgroFeed Mill"`. The image is display block, 68×24 px, `object-fit: contain`.
+- `<nav aria-label="Main navigation">`: flex, gap 28px, font-size 14px, font-weight 600, font-family `Inter, Helvetica, Arial, sans-serif` (the only place Inter is used). Each link has padding `12px 0`. On hover the link gets `text-decoration: underline; text-underline-offset: 4px`. The links, in order:
+  1. `Home` → `./`
+  2. `Swine Line` → `#swine-line`
+  3. `Cattle & Poultry` → `#cattle-poultry`
+  4. `Feed Catalog` → `./` with `aria-current="page"`
+- Admin button `<button id="open-admin" aria-label="Open Admin CMS">`: flex, centred, gap 6px, no background, `1px solid #e4e4e4`, padding `8px 14px`, font-size 11px, letter-spacing `.1em`, uppercase, pointer cursor. Contains a gear/lock SVG (14×14) and `<span>Admin</span>`.
+- Shortlist button `<button id="open-bag" aria-label="Open saved specifications">`: flex, centred, gap 5px, no background or border, min 44×44, pointer cursor. It contains:
+  - An outline bag/clipboard SVG, 22×24, viewBox `0 0 24 26`, no fill, `stroke="currentColor"`, stroke-width 1.3, path `M4 8h16l1 16H3L4 8zM8 8V6a4 4 0 0 1 8 0v2`.
+  - `<span data-cart-count>0</span>` at 10px.
+
+### 1.2 The section element and its attributes
+
+The `<runway-section>` has `id="Runway-template--28035983671601__the_runway_wdM8BG"` and classes `rw rw--add-icon rw--popup rw--list has-dividers has-border`. Its data attributes, which the script reads:
+
+| attribute | value | meaning |
+|---|---|---|
+| `data-feel` | `balanced` | spring stiffness 95, follow lag 0.04 s per place in line |
+| `data-blur` | `true` | depth blur on queue bags |
+| `data-mblur` | `true` | motion blur (line mode only, desktop; unused in ring) |
+| `data-style` | `ring` | desktop layout = 3D ring |
+| `data-mstyle` | `classic` | phone layout = classic diagonal line |
+| `data-fit` | `true` | desktop frame = viewport minus header height |
+| `data-height-mode` | `original` | desktop height rule |
+| `data-height-vh` | `100` | (unused in original mode) |
+| `data-mheight-mode` | `custom` | phone height = custom percentage |
+| `data-mheight-vh` | `109` | phone frame = 109% of the viewport height |
+| `data-reflect` | `false` | no floor reflection |
+| `data-autoplay` | `true` | autoplay on |
+| `data-speed` | `5000` | 5 s per feed bag |
+| `data-after-add` | `stay` | stay on page after saving |
+| `data-bundle-code` | `""` | no discount code |
+| `data-msg-choose` | `Confirm parameter for: [items]` | message when specs are unconfirmed |
+| `data-msg-error` | `Couldn’t save specification. Please try again.` | error copy (curly apostrophe) |
+| `data-msg-soldout` | `Unavailable` | unavailable label |
+
+Its inline style sets the design tokens listed in section 4.
+
+---
+
+## 2. Assets & Visual Cut-outs
+
+Default images use absolute URLs on `https://reel-ref-try-the-look.vercel.app/assets/…` so that initial load, canvas alpha-channel bottom-edge ("feet/base") detection, and aspect-ratio physics work out of the box. All images can be dynamically replaced at runtime via the Admin CMS (Section 15).
+
+### 2.1 Primary 3D Stage Cut-outs (6 Feed Bag Codes)
+
+Each feed bag uses one 640-wide image as `src` and its 1080-wide original in `srcset`. Every bag `<img>` has `srcset="<640 url> 640w, <1080 url> 1080w"`, `sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px"`, `loading="eager"`, `decoding="async"`, `width="1100" height="1956"`, `draggable="false"`, the attribute `data-model-image`, and `alt` = the feed bag name. Clones made by the script get `loading="lazy"`.
+
+| Bag # (index) | Default Display Name | Default 640 px src (640×1138) | Default 1080 px srcset (1080×1920) | Default Product Line Identity |
+|---|---|---|---|---|
+| 1 (0) | `"Feed 414 — Grower Pig"` | `https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp` | `https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp` | 25kg Woven PP Bag — Code 414 Complete Pellet Feed for Grower Pigs (15–30 kg) |
+| 2 (1) | `"Feed 415 — Finisher Pig"` | `https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp` | `https://reel-ref-try-the-look.vercel.app/assets/original-look-5.webp` | 25kg Woven PP Bag — Code 415 High-Lean Pellet Feed for Finisher Pigs (30–60 kg) |
+| 3 (2) | `"Feed 418 — Market Hog"` | `https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp` | `https://reel-ref-try-the-look.vercel.app/assets/original-look-4.webp` | 25kg Woven PP Bag — Code 418 Heavy Finisher Feed for Market Hogs (60 kg–Market) |
+| 4 (3) | `"Feed 412 — Creep Starter"` | `https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp` | `https://reel-ref-try-the-look.vercel.app/assets/original-look-6.webp` | 25kg Woven PP Bag — Code 412 Milk-Enriched Micro-Pellet for Weaned Piglets (7–15 kg) |
+| 5 (4) | `"Feed 416 — Gestating Sow"` | `https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp` | `https://reel-ref-try-the-look.vercel.app/assets/original-look-3.webp` | 25kg Woven PP Bag — Code 416 Fiber-Balanced Formula for Gestating Sows |
+| 6 (5) | `"Feed 420 — Lactating Sow"` | `https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp` | `https://reel-ref-try-the-look.vercel.app/assets/original-look-2.webp` | 25kg Woven PP Bag — Code 420 High-Energy Milk-Boost Formula for Nursing Sows |
+
+Each bag image appears three times in the DOM:
+- in the queue body (`.rw__model`) for the bag,
+- in the clone of that body (the script clones bodies 0–5 into bodies 6–11),
+- in the matching hero (`.rw__hero`).
+
+The hero's `data-probe` attribute holds the same 640 URL (or Admin-updated image URL/DataURL), which the script uses for bottom-edge detection (section 14). Model images start at `opacity:0`. When `image.decode()` resolves (or on load), they get class `is-decoded`, setting `opacity:1` in one step.
+
+### 2.2 Specification Card Thumbnails (Panel, Mobile Sheet & Shortlist)
+
+Each feed bag in the right-hand panel breaks down into **3 specification rows**:
+1. **Row 1: Target Livestock (`Đối tượng chăn nuôi`)**
+2. **Row 2: Suitable Age & Weight (`Độ tuổi phù hợp`)**
+3. **Row 3: Nutritional Composition (`Thành phần dinh dưỡng`)**
+
+Default thumbnail URLs mapped to the specification cards:
+
+| Default URL | natural size | mapped specification card title |
+|---|---|---|
+| `https://reel-ref-try-the-look.vercel.app/assets/source-tatum-5-orbit-copy.webp` | 400×400 | `"Target: Grower Pigs (Heo choai)"` |
+| `https://reel-ref-try-the-look.vercel.app/assets/source-tatum-5-orbit.webp` | 400×400 | `"Target: Finisher & Market Pigs (Heo thịt)"` |
+| `https://reel-ref-try-the-look.vercel.app/assets/source-air-jordan-12-retro-copy.webp` | 400×400 | `"Target: Breeding Sows & Piglets (Heo nái & Heo con)"` |
+| `https://reel-ref-try-the-look.vercel.app/assets/source-tshirt.webp` | 400×563 | `"Age: 45–70 Days (15–30 kg Stage)"` |
+| `https://reel-ref-try-the-look.vercel.app/assets/source-sweatshirt.webp` | 400×581 | `"Age: 70–110 Days (30–60 kg Stage)"` |
+| `https://reel-ref-try-the-look.vercel.app/assets/source-sweatshirt-plus.webp` | 400×610 | `"Age: 110+ Days (60 kg to Market / Sow Cycle)"` |
+| `https://reel-ref-try-the-look.vercel.app/assets/source-hoodie.webp` | 400×555 | `"Nutrition: 17.5%–19.0% Crude Protein · 3,250 kcal ME"` |
+| `https://reel-ref-try-the-look.vercel.app/assets/source-hoodie-black.webp` | 400×536 | `"Nutrition: 15.0%–16.5% Crude Protein · 3,150 kcal ME"` |
+
+---
+
+## 3. Fonts
+
+- **Inter 600 (header nav only).** Declare `@font-face { font-family: Inter; src: url(https://reel-ref-try-the-look.vercel.app/assets/inter-600.woff2) format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }`. Apply it only to `.site-header nav` (`font-family: Inter, Helvetica, Arial, sans-serif`), at 14px / 600 on desktop and 11px on phones.
+- **Everything else** uses the system stack `Helvetica, Arial, sans-serif`, at weight 400 by default. Heading family `--rw-hf` resolves to the same stack at weight `--rw-hw: 400`. Specification titles, buttons, and the standard summary title use weight 500. Pin numbers, thumbnail number badges, and the `"New"` tag use 600.
+- The section uses `-webkit-font-smoothing: antialiased`. Tick labels, the popup kicker, and counts use `font-variant-numeric: tabular-nums`.
+
+---
+
+## 4. Tokens
+
+### 4.1 Inline tokens on the section (exact values)
+
+| token | value |
+|---|---|
+| `--rw-c-stage` | `#ffffff` (stage background) |
+| `--rw-c-panel` | `#ffffff` (panel background) |
+| `--rw-c-text` | `#151413` |
+| `--rw-c-muted` | `#66625c` |
+| `--rw-c-accent` | `#0e0e0e` |
+| `--rw-c-on-accent` | `#ffffff` |
+| `--rw-c-line` | `#c8c8c8` |
+| `--rw-card` | `#DFDFDF` |
+| `--rw-hf` | `var(--font-heading--family, inherit)` |
+| `--rw-hw` | `400` |
+| `--rw-h-d` / `--rw-h-m` | `46px` / `24px` (title) |
+| `--rw-sub-d` / `--rw-sub-m` | `12px` / `12px` |
+| `--rw-eyebrow-d` / `-m` | `11px` / `10px` |
+| `--rw-label-d` / `-m` | `10px` / `9px` |
+| `--rw-chip-d` / `-m` | `17px` / `18px` (popup bag name) |
+| `--rw-ph-d` / `-m` | `18px` / `16px` (panel heading) |
+| `--rw-pt-size-d` / `-m` | `13px` / `12px` (spec card title) |
+| `--rw-price-d` / `-m` | `12px` / `12px` (technical subtitle/guarantee metric) |
+| `--rw-opt-d` / `-m` | `11px` / `11px` |
+| `--rw-total-d` / `-m` | `16px` / `16px` |
+| `--rw-thumb-d` / `-m` | `92px` / `62px` |
+| `--rw-tag-top` / `--rw-tag-left` | `18px` / `0px` |
+| `--rw-thumb-radius` | `0px` |
+| `--rw-morph` | `900ms` |
+| `--rw-bar-r` | `20px` (mobile docked panel radius) |
+| `--rw-panel-w` | `380px` |
+| `--rw-panel-pad-d` | `32px` |
+| `--rw-radius` | `0px` |
+| `--rw-max` | `none` |
+| `--rw-speed` | `5s` |
+| `--rw-ax` | `40%` (rewritten by the script to the hero x in %) |
+| `--rw-btn-radius` | `0px` |
+| `--rw-pill-radius` | `30px` |
+| `--rw-add-radius` | `20px` |
+
+### 4.2 Derived tokens (on `runway-section`)
+
+- Desktop sizes: `--rw-h`, `--rw-sub`, `--rw-label`, `--rw-chip`, `--rw-ph`, `--rw-pt-size`, `--rw-price`, `--rw-opt`, `--rw-total`, and `--rw-thumb` take their `-d` values. `--rw-panel-pad` = 32px. `--rw-model-h` defaults to 560px and is overwritten by the script.
+- Easings:
+  - `--rw-ease: cubic-bezier(.16,1,.3,1)`
+  - `--rw-ease-silk: cubic-bezier(.65,0,.35,1)`
+  - `--rw-ease-spring: cubic-bezier(.34,1.56,.64,1)`
+  - `--rw-ease-sheet: cubic-bezier(.32,.72,0,1)`
+  - `--rw-pin-base: .15s`
+
+---
+
+## 5. Layout
+
+### 5.1 Frame and grid (desktop ≥1100px)
+
+- `.rw__sticky` has height `var(--rw-frame-h, 100svh)` and is a flex column. On desktop this is `max(380, innerHeight − 88)`.
+- `.rw__grid` is a grid with `grid-template-columns: minmax(0,1fr) 380px` and `grid-template-rows: minmax(0,1fr)`, full width.
+- **Left column `.rw__left`**: relative, flex column, background white (stage), `overflow:hidden`. Contains `.rw__head`, `.rw__stage`, `.rw__controls`, and the popup `.rw__lb`.
+- **Right column `.rw__panel.has-rule`**: background white, `border-left: 1px solid #c8c8c8`. `.rw__panel-inner` is `position:absolute; inset:0`, a flex column.
+
+### 5.2 Head
+
+- `.rw__head` is flex, `justify-content: space-between`, `align-items: flex-end`, gap 24px, padding `44px 56px 0`, z-index 5.
+- `.rw__intro` is a flex column, gap 12px, max-width 640px:
+  - `<h2 class="rw__title">Feed the Herd.</h2>`: margin 0, heading family, weight 400, 46px, line-height 1, letter-spacing −0.02em, colour #151413.
+  - `<p class="rw__sub">Six precision formulas, engineered for every growth stage. Tap a bag to inspect target livestock, age & nutrition.</p>`: 12px, line-height 1.55, colour #66625c, max-width 46ch.
+- Visually hidden live region `<span class="rw__sr" aria-live="polite" aria-atomic="true" data-rw-live>` announces e.g. `"Look 1: Feed 414 — Grower Pig"` on each change.
+
+### 5.3 Stage
+
+- `.rw__stage[data-rw-stage]` has `tabindex="0" role="region" aria-roledescription="carousel"` and `aria-label="Feed the Herd. — use arrow keys or swipe to change feed bag"`.
+- Children, in order:
+  1. `.rw__actors[data-rw-actors]` with the six `.rw__model` queue bodies (plus six clones appended by script).
+  2. `.rw__heroes[data-rw-heroes]` with the six `.rw__hero` elements.
+  3. `<span class="rw__sweep">` (light sweep overlay).
+  4. `<span class="rw__cursor" data-rw-cursor>` holding `<span class="rw__cursor-in">` with `<span class="rw__cursor-label rw__cursor-drag">Drag</span><span class="rw__cursor-label rw__cursor-view">View</span>`.
+  5. `<span class="rw__walk"><span class="rw__walk-line"></span></span>` (phone-only progress line).
+- **Queue body, Contact shadow, Hero, and Pins**: Identical DOM structure, CSS classes, aspect-ratio (`--rw-ar: 0.5625`), and radial contact shadow as the reference architecture. Because the section has class `rw--popup`, pins inside the stage heroes are `display:none !important` and appear only inside the "View bag" popup.
+
+### 5.4 Controls row
+
+- `.rw__controls` has Prev button, `.rw__ticks` (6 tick buttons), Autoplay button, and Next button.
+- The 6 default tick labels (`01` to `06` with two non-breaking spaces before the name) are:
+  - `01  Feed 414 — Grower Pig`
+  - `02  Feed 415 — Finisher Pig`
+  - `03  Feed 418 — Market Hog`
+  - `04  Feed 412 — Creep Starter`
+  - `05  Feed 416 — Gestating Sow`
+  - `06  Feed 420 — Lactating Sow`
+
+### 5.5 Panel ("In this formula" — Price-Free Showcase Layout)
+
+- **Head** `.rw__panel-head`: flex, space-between, baseline, gap 12px, padding `44px 32px 18px`. Contains `<h3 class="rw__panel-title">In this formula</h3>` and `<span class="rw__label" data-rw-pieces>` (populated from `<template data-rw-pieces-text>3 specs</template>`).
+- **Look panels**: six `<div class="rw__look-panel" data-rw-panel="i">`. Each contains:
+  1. `.rw__mhead` (phone-only header showing the Feed Bag name and `3 specs`).
+  2. `<ul class="rw__items" role="list">` holding the 3 specification rows (`1: Target Livestock`, `2: Suitable Age & Weight`, `3: Nutritional Composition`).
+  3. `.rw__bundle.has-rule`, the price-free factory standard summary footer.
+  4. `<template data-rw-pieces-text>3 specs</template>`.
+- **Specification Row** `<li class="rw__item" data-rw-card="n" style="--i:n" data-title="...">`:
+  - Same grid (`var(--rw-thumb) minmax(0,1fr) 44px`), hover underline, `.rw__num` badge (1, 2, 3), optional swinging `.rw__tag` (`New`), `.rw__type` (category header: `TARGET LIVESTOCK`, `SUITABLE AGE & STAGE`, or `NUTRITIONAL GUARANTEE`), `.rw__name` (primary spec title), and `.rw__price` (repurposed to display the **Technical Spec Detail / Guarantee Standard** instead of currency prices, e.g., `pellet 3.2mm · antibiotic-free`, `FCR 1.65 · ADG 650g/day`, `Lysine 1.15% · Moisture ≤ 14%`).
+  - Contains the `.rw__add` plus button and expandable `.rw__picker` for selecting Pellet Diameter, Packaging Weight, or Premix Standard.
+
+---
+
+## 6. Data (Price-Free Specification Structure)
+
+### 6.1 The 6 Feed Bags (Looks)
+
+| # | index | look key | feed bag name | model image | 3 specification rows (1. Target Livestock · 2. Suitable Age · 3. Nutrition) | pieces label | Quality Standard Summary (`.rw__bundle-price` replacement) |
+|---|---|---|---|---|---|---|---|
+| 01 | 0 | `bndthK` | `Feed 414 — Grower Pig` | model-1 / original-look-1 | Target: Grower Pigs (Heo choai) · Age: 45–70 Days (15–30 kg Stage) · Nutrition: 17.5%–19.0% Crude Protein · 3,250 kcal ME | `3 specs` | **TCVN 1547 · ISO 22000** |
+| 02 | 1 | `XckgG6` | `Feed 415 — Finisher Pig` | model-5 / original-look-5 | Target: Finisher & Market Pigs (Heo thịt) · Age: 70–110 Days (30–60 kg Stage) (tag `"New"`) · Nutrition: 15.0%–16.5% Crude Protein · 3,150 kcal ME | `3 specs` | **TCVN 1547 · ISO 22000** |
+| 03 | 2 | `rLfAhC` | `Feed 418 — Market Hog` | model-4 / original-look-4 | Target: Finisher & Market Pigs (Heo thịt) · Age: 110+ Days (60 kg to Market / Sow Cycle) (tag `"New"`) · Nutrition: 15.0%–16.5% Crude Protein · 3,150 kcal ME | `3 specs` | **TCVN 1547 · ISO 22000** |
+| 04 | 3 | `FKg67q` | `Feed 412 — Creep Starter` | model-6 / original-look-6 | Target: Breeding Sows & Piglets (Heo nái & Heo con) · Age: 45–70 Days (15–30 kg Stage) · Nutrition: 17.5%–19.0% Crude Protein · 3,250 kcal ME | `3 specs` | **TCVN 1547 · ISO 22000** |
+| 05 | 4 | `8KREEE` | `Feed 416 — Gestating Sow` | model-3 / original-look-3 | Target: Breeding Sows & Piglets (Heo nái & Heo con) · Age: 110+ Days (60 kg to Market / Sow Cycle) · Nutrition: 15.0%–16.5% Crude Protein · 3,150 kcal ME | `3 specs` | **TCVN 1547 · ISO 22000** |
+| 06 | 5 | `N3bfm9` | `Feed 420 — Lactating Sow` | model-2 / original-look-2 | Target: Breeding Sows & Piglets (Heo nái & Heo con) · Age: 70–110 Days (30–60 kg Stage) · Nutrition: 17.5%–19.0% Crude Protein · 3,250 kcal ME | `3 specs` | **TCVN 1547 · ISO 22000** |
+
+### 6.2 Pins per Feed Bag (Hero/Popup, `left` / `top` as % of the figure box)
+
+| Feed Bag | Pin 1 (Top — Livestock) | Pin 2 (Middle — Age/Weight) | Pin 3 (Bottom — Nutrition) |
+|---|---|---|---|
+| 1 `Feed 414 — Grower Pig` | `"Target: Grower Pigs (Heo choai)"` 47% / 27% | `"Age: 45–70 Days (15–30 kg Stage)"` 48% / 58% | `"Nutrition: 17.5%–19.0% Crude Protein · 3,250 kcal ME"` 45% / 96% |
+| 2 `Feed 415 — Finisher Pig` | `"Target: Finisher & Market Pigs (Heo thịt)"` 50% / 28% | `"Age: 70–110 Days (30–60 kg Stage)"` 48% / 58% | `"Nutrition: 15.0%–16.5% Crude Protein · 3,150 kcal ME"` 45% / 88% |
+| 3 `Feed 418 — Market Hog` | `"Target: Finisher & Market Pigs (Heo thịt)"` 50% / 28% | `"Age: 110+ Days (60 kg to Market / Sow Cycle)"` 48% / 58% | `"Nutrition: 15.0%–16.5% Crude Protein · 3,150 kcal ME"` 45% / 88% |
+| 4 `Feed 412 — Creep Starter` | `"Target: Breeding Sows & Piglets (Heo nái & Heo con)"` 50% / 28% | `"Age: 45–70 Days (15–30 kg Stage)"` 48% / 58% | `"Nutrition: 17.5%–19.0% Crude Protein · 3,250 kcal ME"` 45% / 88% |
+| 5 `Feed 416 — Gestating Sow` | `"Target: Breeding Sows & Piglets (Heo nái & Heo con)"` 50% / 28% | `"Age: 110+ Days (60 kg to Market / Sow Cycle)"` 48% / 58% | `"Nutrition: 15.0%–16.5% Crude Protein · 3,150 kcal ME"` 45% / 88% |
+| 6 `Feed 420 — Lactating Sow` | `"Target: Breeding Sows & Piglets (Heo nái & Heo con)"` 50% / 28% | `"Age: 70–110 Days (30–60 kg Stage)"` 48% / 58% | `"Nutrition: 17.5%–19.0% Crude Protein · 3,250 kcal ME"` 45% / 88% |
+
+### 6.3 Specification Items (Price-Free Catalog Items)
+
+No currency or dollar figures appear anywhere on the page. The `.rw__price` element in each row displays the **Technical Guarantee Metric (`specNote`)**:
+
+| catalog id | displayed name (`.rw__name`) | category line (`.rw__type`) | technical subline (`.rw__price`) | option legend | values (first pre-checked) | link |
+|---|---|---|---|---|---|---|
+| `tatum-5-orbit-copy` | `Target: Grower Pigs (Heo choai)` | `TARGET LIVESTOCK \| CODE 414` | `Fast frame & digestive development` | `Pellet Diameter (mm)` | `2.5mm`, `3.0mm`, `3.2mm`, `3.5mm`, `4.0mm`, `4.5mm`, `5.0mm` | `https://nike-makknzjs.myshopify.com/products/tatum-5-orbit-copy` |
+| `tatum-5-orbit` | `Target: Finisher & Market Pigs (Heo thịt)` | `TARGET LIVESTOCK \| CODE 415 / 418` | `High lean-meat percentage & firm fat` | `Pellet Diameter (mm)` | `2.5mm`, `3.0mm`, `3.2mm`, `3.5mm`, `4.0mm`, `4.5mm`, `5.0mm` | `https://nike-makknzjs.myshopify.com/products/tatum-5-orbit` |
+| `air-jordan-12-retro-copy` | `Target: Breeding Sows & Piglets (Heo nái & Heo con)` | `TARGET LIVESTOCK \| BREEDER LINE` | `Immunity & reproductive conditioning` | `Pellet Diameter (mm)` | `2.5mm`, `3.0mm`, `3.2mm`, `3.5mm`, `4.0mm`, `4.5mm`, `5.0mm` | `https://nike-makknzjs.myshopify.com/products/air-jordan-12-retro-copy` |
+| `tshirt` | `Age: 45–70 Days (15–30 kg Stage)` | `SUITABLE AGE & WEIGHT` | `Target FCR: 1.55 – 1.65 · Ad libitum` | `Bag Packaging` | `25kg PP`, `40kg PP`, `50kg PP`, `Jumbo 1T` | `https://nike-makknzjs.myshopify.com/products/tshirt` |
+| `sweatshirt` | `Age: 70–110 Days (30–60 kg Stage)` | `SUITABLE AGE & WEIGHT` | `Target FCR: 2.05 – 2.15 · 2.2–2.8 kg/day` | `Bag Packaging` | `25kg PP`, `40kg PP`, `50kg PP`, `Jumbo 1T` | `https://nike-makknzjs.myshopify.com/products/sweatshirt` |
+| `sweatshirt-plus` | `Age: 110+ Days (60 kg to Market / Sow Cycle)` | `SUITABLE AGE & WEIGHT` | `Target FCR: 2.35 – 2.50 · Heavy finish` | `Bag Packaging` | `25kg PP`, `40kg PP`, `50kg PP`, `Jumbo 1T` | `https://nike-makknzjs.myshopify.com/products/sweatshirt-plus` |
+| `hoodie` | `Nutrition: 17.5%–19.0% Crude Protein · 3,250 kcal ME` | `NUTRITIONAL GUARANTEE` | `Lysine ≥ 1.15% · Moisture ≤ 14% · Fiber ≤ 5%` | `Formula Premix` | `Standard`, `Organic Acid+`, `Enzyme+`, `Export Grade` | `https://nike-makknzjs.myshopify.com/products/hoodie` |
+| `hoodie-black` | `Nutrition: 15.0%–16.5% Crude Protein · 3,150 kcal ME` | `NUTRITIONAL GUARANTEE` | `Lysine ≥ 0.95% · Moisture ≤ 14% · Fiber ≤ 6%` | `Formula Premix` | `Standard`, `Organic Acid+`, `Enzyme+`, `Export Grade` | `https://nike-makknzjs.myshopify.com/products/hoodie-black` |
+
+**Variant IDs.** Keep the exact numeric variant IDs mapped in order to the option values above:
+- `tatum-5-orbit-copy`: 57015167025457, 57015167058225, 57015167090993, 57015167123761, 57015167156529, 57015167189297, 57015167222065
+- `tatum-5-orbit`: 57015166730545, 57015166763313, 57015166796081, 57015166828849, 57015166861617, 57015166894385, 57015166927153
+- `air-jordan-12-retro-copy`: 57015176364337, 57015176397105, 57015176429873, 57015176462641, 57015176495409, 57015176528177, 57015176560945
+- `tshirt`: 56835911582001, 56835911614769, 56835911647537, 56835911680305
+- `sweatshirt`: 56835806396721, 56835806429489, 56835806462257, 56835806495025
+- `sweatshirt-plus`: 56836143743281, 56836143776049, 56836143808817, 56836143841585
+- `hoodie`: 56836002185521, 56836002218289, 56836002251057, 56836002283825
+- `hoodie-black`: 56836251681073, 56836251713841, 56836251746609, 56836251779377
+
+### 6.4 Bundle Footer Copy (Price-Free Reference Footer)
+
+- `.rw__bundle-row` displays the factory quality certification instead of prices:
+  - `.rw__bundle-title`: `Complete Technical Datasheet`
+  - `.rw__bundle-note`: `Verified factory standard · 25kg woven PP bag`
+  - `.rw__bundle-price`: `<strong>TCVN 1547 · ISO 22000</strong>` (no `<s>` strikethrough price).
+- CTA button labels:
+  - `.rw__cta-add`: `Save full formula to shortlist`
+  - `.rw__cta-m` (phone only): `Save full formula — 3 specs`
+  - `.rw__cta-done`: `Full formula saved to shortlist`
+- In `<dialog id="bag-dialog">`, omit all dollar amounts and subtotal lines (`#bag-total` shows `"Total saved specifications: X items"`). Each row shows `Parameter: <selected option> · Quantity <N>` and the export button downloads `feed-specification-shortlist.txt` without prices.
+
+---
+
+## 7. Carousel Math, Physics, Interactions, Popups & Mobile (Sections 7–14)
+
+Implement Sections 7 through 14 **identically** to the original engineering specification:
+- **Section 7 (Carousel math)**: 12 bodies (6 originals + 6 clones), `balanced` spring (`K = 95`, `C = 2√K ≈ 19.49`, `lag = 0.04s`), entrance offset `start = 1.15`, desktop 3D `ring` mode (`cx = 0.5W, R = 0.62W, P = 1.65W, floor = H − 34, horizon = 0.36H, fs = 1.08`), phone `classic` diagonal queue mode, invisible Hero ↔ Body swap on `rw--still`, and `rw-sweep` soft-light band on change.
+- **Section 8 (Autoplay & Lifecycle)**: `measure()` resize handling, IntersectionObserver `is-revealed` choreography, `setIndex(i)` accessibility rank updates, and 5000ms autoplay progress bar pausing on panel hover or permanently stopping on `engaged`.
+- **Section 9 (Interactions)**: Pointer drag/swipe with velocity projection, horizontal trackpad wheel (`|acc| > 45`), keyboard arrow navigation, custom lerping `Drag / View` cursor (`lerp = 0.18`), and double-ripple pin halos linked to panel rows via `hot(n, scroll)`.
+- **Section 10 (Panel & Shortlist Bag)**: Plus button rotating 45° on `.is-picking`, spinner shimmer on `.is-loading`, check draw + burst ring on `.is-added`, inline pill pickers, localStorage key `runway-styling-bag-v3`, toast notifications (`"Spec saved to your shortlist"` / `"Formula saved to your shortlist"`), and `<dialog id="bag-dialog">`.
+- **Section 11–14 (FLIP Lightbox, Mobile Drawer, Reduced Motion & Bottom-Edge Alpha Probe)**:
+  - Clicking the front bag opens `.rw__lb` (`data-word="Formula"`, showing e.g. `Formula 01` and `Feed 414 — Grower Pig`, with hint `"Tap a dot to inspect the specification"`), animating via FLIP from the runway coordinates and springing in the 3 numbered pins.
+  - On phones (`≤749px`), the panel docks at the bottom with `20px` top border-radius, horizontal snap-scrolling spec cards, and a fixed `<div class="rw-sheet-host">` bottom sheet for selecting parameters.
+  - Canvas alpha probe (`48px` wide, scanning from bottom for `alpha > 40`) sets `--rw-foot` so every feed bag rests flush on the contact shadow.
+
+---
+
+## 15. Admin CMS Modal (`ID: admin` / `Password: adminsale`)
+
+Build a comprehensive, minimal, high-craft Admin CMS inside `<dialog id="admin-dialog">` matching the page's `#151413` / `#ffffff` / `1px solid #c8c8c8` aesthetic.
+
+### 15.1 Authentication Gate
+- Clicking `#open-admin` in the header opens `<dialog id="admin-dialog">`.
+- If not authenticated in `sessionStorage.getItem('rw-admin-auth') === '1'`, display the **Admin Login View**:
+  - Heading: `Admin Access — Product Showcase`
+  - Inputs:
+    - `Admin ID` (`<input type="text" id="admin-user" autocomplete="username">`)
+    - `Password` (`<input type="password" id="admin-pass" autocomplete="current-password">`)
+  - Exact credentials required:
+    - **ID**: `admin`
+    - **Password**: `adminsale`
+  - On invalid login, display inline error `"Invalid ID or password. Please use authorized sales credentials."`
+  - On valid login, store `sessionStorage.setItem('rw-admin-auth', '1')` and switch to the **Admin Editor View**.
+
+### 15.2 Admin Editor Capabilities (Live Customization & `localStorage` Persistence)
+Store all customized feed bag data under `localStorage` key `runway-feed-cms-v1`. On page load, if `runway-feed-cms-v1` exists, hydrate the 6 feed bags, their packaging images, their pins, and their 3 specification rows from `localStorage` before initializing `<runway-section>` (and provide a live `applyCmsChanges()` method on `<runway-section>` so saving in Admin updates the DOM immediately without page reload).
+
+The Admin Editor View must provide:
+1. **Feed Bag Selector Tabs (Slot 01 to Slot 06)**:
+   - Switch between the 6 showcase slots (`01: Feed 414`, `02: Feed 415`, `03: Feed 418`, `04: Feed 412`, `05: Feed 416`, `06: Feed 420`).
+2. **Bag Identity & Packaging Image Replacement**:
+   - **Feed Bag Title**: Text input (updates tick label, hero `data-name`, `alt`, popup name, and mobile header).
+   - **Quality Standard Badge**: Text input (updates `.rw__bundle-price strong`, e.g., `TCVN 1547 · ISO 22000`).
+   - **Packaging Cut-out Image (640w & 1080w)**:
+     - Input for direct Image URL **PLUS** a file upload button (`<input type="file" accept="image/png,image/webp,image/jpeg">`) that reads the uploaded file via `FileReader.readAsDataURL()` (or compresses onto a canvas) so the sales staff can upload a new transparent feed bag image directly from their computer/phone.
+     - Live thumbnail preview of the current bag cut-out.
+     - Updating the image automatically updates the queue body `.rw__model[data-index="i"] img`, its clone `.rw__model[data-rw-clone][data-index="i"] img`, and `.rw__hero[data-index="i"] img`, then re-runs the `probeFoot()` canvas alpha scan so the new bag sits flush on the floor shadow.
+3. **3 Specification Pillars Editor (for the selected Feed Bag)**:
+   - Editable sub-panels for **Spec 1 (Target Livestock / Đối tượng chăn nuôi)**, **Spec 2 (Suitable Age & Weight / Độ tuổi phù hợp)**, and **Spec 3 (Nutritional Composition / Thành phần dinh dưỡng)**.
+   - For each of the 3 specs, allow editing:
+     - **Category Header (`.rw__type`)**: e.g., `TARGET LIVESTOCK | CODE 414`
+     - **Specification Title (`.rw__name` & Pin Tooltip `data-tip`)**: e.g., `Target: Grower Pigs (Heo choai)`
+     - **Technical Subline / Guarantee (`.rw__price`)**: e.g., `Fast frame & digestive development`
+     - **Badge Tag**: Optional text (e.g., `New` or empty to hide `.rw__tag`)
+     - **Thumbnail Image**: URL input + File Upload (`readAsDataURL`) for the 400px spec card thumbnail.
+     - **Pin Coordinates on Bag**: Two numeric inputs for `Pin Left (%)` (`0–100`) and `Pin Top (%)` (`0–100`) so the admin can reposition Pin 1, Pin 2, and Pin 3 on the new bag packaging.
+4. **Action Bar at Bottom of Admin Modal**:
+   - **Save & Apply Changes**: Saves to `localStorage` (`runway-feed-cms-v1`), updates all DOM elements inside `<runway-section>` and the catalog object, closes the modal, and shows toast `"Product showcase updated"`.
+   - **Export / Import Config JSON**: Allows downloading the entire `runway-feed-cms-v1` configuration as a `.json` file or importing a `.json` file so the sales rep can share pre-configured feed catalogs across devices.
+   - **Reset to Factory Defaults**: Clears `runway-feed-cms-v1` and restores the original 6 feed bags (414, 415, 418, 412, 416, 420).
+   - **Logout**: Clears `sessionStorage.getItem('rw-admin-auth')` and closes the dialog.

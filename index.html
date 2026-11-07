@@ -1,0 +1,1888 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Thái Việt Corporation — Danh Mục Công Thức Thức Ăn Chăn Nuôi</title>
+  <meta name="description" content="Sáu công thức thức ăn chăn nuôi chuẩn xác từ Thái Việt Corporation, thiết kế cho từng giai đoạn sinh trưởng tối ưu. Trải nghiệm không gian 3D tương tác và khám phá chi tiết thành phần dinh dưỡng.">
+  <meta property="og:title" content="Thái Việt Corporation — Danh Mục Công Thức Thức Ăn Chăn Nuôi">
+  <meta property="og:description" content="Sáu công thức thức ăn chăn nuôi chuẩn xác từ Thái Việt Corporation, thiết kế cho từng giai đoạn sinh trưởng tối ưu. Trải nghiệm không gian 3D tương tác và khám phá chi tiết thành phần dinh dưỡng.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" fetchpriority="high">
+  <style>
+    :root {
+      color-scheme: light;
+      --font-body--family: "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-body--weight: 400;
+      --font-heading--family: "Quicksand", "Be Vietnam Pro", -apple-system, sans-serif;
+      --font-heading--weight: 600;
+      --color-primary-button-background: #151413;
+      --color-primary-button-text: #fff;
+      --style-border-radius-buttons-primary: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      max-width: 100%;
+      font-family: var(--font-body--family);
+      font-weight: 400;
+      color: #151413;
+      background: #fff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    h1, h2, h3, h4, .rw__title, .rw__panel-title, .brand-text, .rw__lb-title, .dlg-head h2 {
+      font-family: var(--font-heading--family);
+      font-weight: 600;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+      color: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 2px solid #151413;
+      outline-offset: 4px;
+    }
+
+    /* 1.1 Site Header */
+    .site-header {
+      min-height: 88px;
+      padding: 14px 40px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid #e4e4e4;
+      background: #fff;
+      position: relative;
+      z-index: 50;
+    }
+
+    .site-header .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+      margin-right: auto;
+    }
+
+    .site-header .brand img {
+      display: block;
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .brand-text-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      justify-content: center;
+    }
+
+    .site-header .brand-text {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: #151413;
+      text-transform: uppercase;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
+    .site-header .brand-subtext {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: #b91c1c;
+      text-transform: uppercase;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
+    #open-admin {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      background: none;
+      border: 1px solid #e4e4e4;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    }
+
+    #open-admin:hover {
+      border-color: #151413;
+      background: #151413;
+      color: #fff;
+    }
+
+    /* 4.2 Runway Section & Derived Tokens */
+    runway-section.rw {
+      display: block;
+      position: relative;
+      background: var(--rw-c-stage, #fff);
+      color: var(--rw-c-text, #151413);
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+
+      --rw-h: var(--rw-h-d, 46px);
+      --rw-sub: var(--rw-sub-d, 12px);
+      --rw-eyebrow: var(--rw-eyebrow-d, 11px);
+      --rw-label: var(--rw-label-d, 10px);
+      --rw-chip: var(--rw-chip-d, 17px);
+      --rw-ph: var(--rw-ph-d, 18px);
+      --rw-pt-size: var(--rw-pt-size-d, 13px);
+      --rw-price: var(--rw-price-d, 12px);
+      --rw-opt: var(--rw-opt-d, 11px);
+      --rw-total: var(--rw-total-d, 16px);
+      --rw-thumb: var(--rw-thumb-d, 92px);
+      --rw-panel-pad: var(--rw-panel-pad-d, 32px);
+      --rw-model-h: 560px;
+
+      --rw-ease: cubic-bezier(.16, 1, .3, 1);
+      --rw-ease-silk: cubic-bezier(.65, 0, .35, 1);
+      --rw-ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+      --rw-ease-sheet: cubic-bezier(.32, .72, 0, 1);
+      --rw-pin-base: .15s;
+    }
+
+    runway-section.rw.has-border {
+      border-bottom: 1px solid var(--rw-c-line, #c8c8c8);
+    }
+
+    .rw__sr {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+
+    /* 5.1 Frame & Grid */
+    .rw__sticky {
+      height: var(--rw-frame-h, 100svh);
+      min-height: 540px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rw__grid {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) var(--rw-panel-w, 380px);
+      grid-template-rows: minmax(0, 1fr);
+    }
+
+    .rw__left {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: var(--rw-c-stage, #ffffff);
+      overflow: hidden;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    /* 5.2 Head (Screen reader announcer host) */
+    .rw__head {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 14px 40px 0;
+      position: relative;
+      z-index: 5;
+      pointer-events: none;
+      min-height: 0;
+    }
+
+    /* 5.3 Stage */
+    .rw__stage {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      touch-action: pan-y;
+      cursor: grab;
+      outline: none;
+    }
+
+    .rw__stage:active {
+      cursor: grabbing;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .rw__stage.has-custom-cursor {
+        cursor: none;
+      }
+    }
+
+    .rw__actors,
+    .rw__heroes {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .rw__model,
+    .rw__hero {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: var(--rw-model-h, 560px);
+      width: calc(var(--rw-model-h, 560px) * var(--rw-ar, 0.5625));
+      transform-origin: 50% 100%;
+      will-change: transform, opacity, filter;
+      pointer-events: none;
+    }
+
+    .rw__model-inner,
+    .rw__figure {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      display: block;
+    }
+
+    .rw__ground {
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      bottom: -3.2%;
+      height: 7.5%;
+      border-radius: 50%;
+      background: radial-gradient(50% 50% at 50% 50%, rgba(21, 20, 19, 0.24) 0%, rgba(21, 20, 19, 0.09) 48%, rgba(21, 20, 19, 0) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .rw__model img,
+    .rw__figure img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: 50% 100%;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+      opacity: 0;
+      transform: translateY(var(--rw-foot, 0%));
+      filter: drop-shadow(0 14px 24px rgba(21, 20, 19, 0.08));
+    }
+
+    .rw__model img.is-decoded,
+    .rw__figure img.is-decoded {
+      opacity: 1;
+    }
+
+    /* Hero ↔ Body swap on rw--still */
+    .rw__hero {
+      opacity: 0;
+      z-index: 120;
+    }
+
+    runway-section.rw--still .rw__hero.is-active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    runway-section.rw--still .rw__model.is-front {
+      opacity: 0 !important;
+    }
+
+    /* Because section has rw--popup, pins inside stage heroes are hidden and only shown inside the popup */
+    runway-section.rw--popup .rw__heroes .rw__pin {
+      display: none !important;
+    }
+
+    /* Numbered Specification Pins */
+    .rw__pin {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      margin-left: -16px;
+      margin-top: -16px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      pointer-events: auto;
+      cursor: pointer;
+      opacity: 0;
+      transform: scale(0.4);
+      transition: transform 0.45s var(--rw-ease-spring), opacity 0.35s var(--rw-ease);
+      transition-delay: calc(var(--rw-pin-base, 0.15s) + var(--pin-i, 0) * 0.07s);
+    }
+
+    .rw__lb.is-open .rw__pin {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .rw__pin-dot {
+      position: relative;
+      z-index: 2;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #151413;
+      color: #ffffff;
+      border: 1.5px solid #ffffff;
+      font-size: 11px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+      transition: transform 0.25s var(--rw-ease-spring), background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .rw__pin-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1px solid rgba(21, 20, 19, 0.35);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .rw__pin::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background: #151413;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.25;
+      padding: 6px 10px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+      z-index: 20;
+    }
+
+    .rw__pin:hover .rw__pin-dot,
+    .rw__pin.is-hot .rw__pin-dot {
+      transform: scale(1.18);
+      background: #ffffff;
+      color: #151413;
+      border-color: #151413;
+    }
+
+    .rw__pin:hover::after,
+    .rw__pin.is-hot::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .rw__pin:hover .rw__pin-ring,
+    .rw__pin.is-hot .rw__pin-ring {
+      animation: rw-pin-ripple 1.35s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    }
+
+    @keyframes rw-pin-ripple {
+      0% {
+        transform: scale(0.8);
+        opacity: 0.75;
+      }
+      100% {
+        transform: scale(1.85);
+        opacity: 0;
+      }
+    }
+
+    /* Light Sweep Overlay */
+    .rw__sweep {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+      background: linear-gradient(105deg, rgba(255,255,255,0) 35%, rgba(255,255,255,0.55) 50%, rgba(255,255,255,0) 65%);
+      transform: translateX(-120%);
+      opacity: 0;
+    }
+
+    runway-section.is-sweeping .rw__sweep {
+      animation: rw-sweep 0.85s var(--rw-ease) forwards;
+    }
+
+    @keyframes rw-sweep {
+      0% {
+        transform: translateX(-100%);
+        opacity: 0.85;
+      }
+      100% {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    /* Custom Lerping Drag / View Cursor */
+    .rw__cursor {
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 150;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      will-change: transform;
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      .rw__cursor {
+        display: none !important;
+      }
+    }
+
+    .rw__cursor.is-visible {
+      opacity: 1;
+    }
+
+    .rw__cursor-in {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 62px;
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: rgba(21, 20, 19, 0.92);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transform: translate(-50%, -50%) scale(1);
+      transition: transform 0.2s var(--rw-ease), background-color 0.2s ease;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+    }
+
+    .rw__cursor.is-down .rw__cursor-in {
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    .rw__cursor-label {
+      display: none;
+    }
+
+    .rw__cursor:not(.is-over-hero) .rw__cursor-drag {
+      display: inline;
+    }
+
+    .rw__cursor.is-over-hero .rw__cursor-view {
+      display: inline;
+    }
+
+    /* Phone Walk Line */
+    .rw__walk {
+      display: none;
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 14px;
+      height: 2px;
+      background: rgba(21, 20, 19, 0.12);
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    .rw__walk-line {
+      display: block;
+      height: 100%;
+      width: 100%;
+      background: #151413;
+      transform-origin: 0 50%;
+      transform: scaleX(var(--rw-walk-p, 0.166));
+      transition: transform 0.35s var(--rw-ease);
+    }
+
+    /* 5.4 Controls Row */
+    .rw__controls {
+      position: relative;
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 56px 28px;
+    }
+
+    .rw__arrow,
+    .rw__auto {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--rw-c-line, #c8c8c8);
+      background: #fff;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    }
+
+    .rw__arrow:hover,
+    .rw__auto:hover {
+      border-color: #151413;
+      background: #151413;
+      color: #fff;
+    }
+
+    .rw__auto .rw__ic-play {
+      display: none;
+    }
+
+    runway-section.is-paused .rw__auto .rw__ic-pause {
+      display: none;
+    }
+
+    runway-section.is-paused .rw__auto .rw__ic-play {
+      display: block;
+    }
+
+    .rw__ticks {
+      flex: 1 1 auto;
+      display: flex;
+      gap: 12px;
+      min-width: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .rw__ticks::-webkit-scrollbar {
+      display: none;
+    }
+
+    .rw__tick {
+      flex: 1 1 0;
+      min-width: 105px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 7px;
+      padding: 6px 0;
+      text-align: left;
+      color: var(--rw-c-muted, #66625c);
+      transition: color 0.2s ease;
+    }
+
+    .rw__tick.is-active,
+    .rw__tick:hover {
+      color: var(--rw-c-text, #151413);
+    }
+
+    .rw__tick-num {
+      font-size: var(--rw-label);
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .rw__tick.is-active .rw__tick-num {
+      font-weight: 600;
+    }
+
+    .rw__tick-bar {
+      width: 100%;
+      height: 2px;
+      background: #e4e4e4;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rw__tick-fill {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #151413;
+      transform-origin: 0 50%;
+      transform: scaleX(0);
+    }
+
+    .rw__tick.is-active .rw__tick-fill {
+      transform: scaleX(var(--rw-tick-p, 0));
+    }
+
+    .rw__tick.is-past .rw__tick-fill {
+      transform: scaleX(1);
+    }
+
+    /* 11. FLIP Lightbox (.rw__lb) */
+    .rw__lb {
+      position: absolute;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 36px 56px 28px;
+      pointer-events: auto;
+    }
+
+    .rw__lb-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      transition: opacity 0.38s var(--rw-ease);
+    }
+
+    .rw__lb.is-open .rw__lb-backdrop {
+      opacity: 1;
+    }
+
+    .rw__lb-head {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.32s var(--rw-ease), transform 0.32s var(--rw-ease);
+    }
+
+    .rw__lb.is-open .rw__lb-head {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .rw__lb-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .rw__lb-kicker {
+      font-size: var(--rw-eyebrow);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--rw-c-muted, #66625c);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rw__lb-title {
+      margin: 0;
+      font-size: var(--rw-chip);
+      font-weight: 500;
+      color: var(--rw-c-text, #151413);
+    }
+
+    .rw__lb-close {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--rw-c-line, #c8c8c8);
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+    }
+
+    .rw__lb-close:hover {
+      border-color: #151413;
+      background: #151413;
+      color: #fff;
+    }
+
+    .rw__lb-stage {
+      position: relative;
+      z-index: 2;
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .rw__lb-stage .rw__figure {
+      height: min(64vh, 580px);
+      width: calc(min(64vh, 580px) * var(--rw-ar, 0.5625));
+      pointer-events: auto;
+      will-change: transform;
+    }
+
+    .rw__lb-hint {
+      position: relative;
+      z-index: 2;
+      margin: 0;
+      text-align: center;
+      font-size: 11px;
+      color: var(--rw-c-muted, #66625c);
+      letter-spacing: 0.02em;
+      opacity: 0;
+      transition: opacity 0.35s var(--rw-ease) 0.15s;
+    }
+
+    .rw__lb.is-open .rw__lb-hint {
+      opacity: 1;
+    }
+
+    /* 5.5 Right Column Panel ("In this formula") */
+    .rw__panel {
+      position: relative;
+      background: var(--rw-c-panel, #ffffff);
+      min-height: 0;
+      z-index: 20;
+    }
+
+    .rw__panel.has-rule {
+      border-left: 1px solid var(--rw-c-line, #c8c8c8);
+    }
+
+    .rw__panel-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .rw__panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      padding: 44px 32px 18px;
+      flex-shrink: 0;
+    }
+
+    .rw__panel-title {
+      margin: 0;
+      font-size: var(--rw-ph);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .rw__label {
+      font-size: var(--rw-label);
+      color: var(--rw-c-muted, #66625c);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rw__panels {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    .rw__look-panel {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity 0.32s var(--rw-ease), transform 0.32s var(--rw-ease);
+    }
+
+    .rw__look-panel.is-active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .rw__mhead {
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px 10px;
+    }
+
+    .rw__mhead-title {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .rw__mhead-count {
+      font-size: 10px;
+      color: var(--rw-c-muted, #66625c);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .rw__items {
+      list-style: none;
+      margin: 0;
+      padding: 0 32px;
+      flex: 1 1 auto;
+      overflow-y: auto;
+      min-height: 0;
+    }
+
+    .rw__item {
+      display: grid;
+      grid-template-columns: var(--rw-thumb, 92px) minmax(0, 1fr);
+      align-items: center;
+      column-gap: 16px;
+      padding: 18px 0;
+      border-top: 1px solid #ececec;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .rw__item:first-child {
+      border-top: 1px solid var(--rw-c-line, #c8c8c8);
+    }
+
+    .rw__item.is-hot {
+      background-color: #f7f7f6;
+    }
+
+    .rw__thumb {
+      position: relative;
+      width: var(--rw-thumb, 92px);
+      height: calc(var(--rw-thumb, 92px) * 1.12);
+      background: var(--rw-card, #DFDFDF);
+      border-radius: 8px;
+      overflow: hidden;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .rw__thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s var(--rw-ease);
+    }
+
+    .rw__item:hover .rw__thumb img {
+      transform: scale(1.04);
+    }
+
+    .rw__num {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      z-index: 2;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      background: rgba(255, 255, 255, 0.94);
+      color: #151413;
+      font-size: 10px;
+      font-weight: 600;
+      border-radius: 4px;
+      font-variant-numeric: tabular-nums;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .rw__tag {
+      position: absolute;
+      top: var(--rw-tag-top, 18px);
+      left: var(--rw-tag-left, 0px);
+      z-index: 3;
+      background: #151413;
+      color: #ffffff;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-radius: 4px;
+      padding: 3px 6px;
+      transform-origin: 0% 50%;
+      animation: rw-tag-swing 3.6s ease-in-out infinite;
+    }
+
+    @keyframes rw-tag-swing {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(-3deg); }
+    }
+
+    .rw__info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .rw__type {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--rw-c-muted, #66625c);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rw__name {
+      font-size: var(--rw-pt-size, 13px);
+      font-weight: 500;
+      line-height: 1.35;
+      color: var(--rw-c-text, #151413);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .rw__item:hover .rw__name {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .rw__price {
+      font-size: var(--rw-price, 12px);
+      color: var(--rw-c-muted, #66625c);
+      line-height: 1.35;
+    }
+
+    /* 6.4 Bundle Footer (Static Certification Summary) */
+    .rw__bundle {
+      padding: 24px 32px 28px;
+      background: #fff;
+      flex-shrink: 0;
+    }
+
+    .rw__bundle.has-rule {
+      border-top: 1px solid var(--rw-c-line, #c8c8c8);
+    }
+
+    .rw__bundle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin: 0;
+    }
+
+    .rw__bundle-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .rw__bundle-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--rw-c-text, #151413);
+    }
+
+    .rw__bundle-note {
+      font-size: 11px;
+      color: var(--rw-c-muted, #66625c);
+    }
+
+    .rw__bundle-price {
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .rw__bundle-price strong {
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    /* Mobile Parameter Bottom Sheet (.rw-sheet-host) */
+    .rw-sheet-host {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.28s var(--rw-ease);
+    }
+
+    .rw-sheet-host.is-open {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    .rw-sheet-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(21, 20, 19, 0.45);
+    }
+
+    .rw-sheet {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 520px;
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      padding: 22px 24px 28px;
+      transform: translateY(100%);
+      transition: transform 0.36s var(--rw-ease-sheet);
+    }
+
+    .rw-sheet-host.is-open .rw-sheet {
+      transform: translateY(0);
+    }
+
+    /* Dialogs (#admin-dialog) */
+    dialog {
+      border: 1px solid #151413;
+      padding: 0;
+      background: #fff;
+      color: #151413;
+      border-radius: 12px;
+      overflow: hidden;
+      max-width: 94vw;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
+    }
+
+    dialog::backdrop {
+      background: rgba(21, 20, 19, 0.48);
+      backdrop-filter: blur(3px);
+    }
+
+    #admin-dialog {
+      width: 880px;
+      max-height: 90vh;
+    }
+
+    .dlg-wrap {
+      display: flex;
+      flex-direction: column;
+      max-height: 88vh;
+    }
+
+    .dlg-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid #e4e4e4;
+    }
+
+    .dlg-head h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .dlg-close {
+      padding: 6px 14px;
+      border: 1px solid #c8c8c8;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .dlg-close:hover {
+      border-color: #151413;
+      background: #151413;
+      color: #fff;
+    }
+
+    .dlg-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1 1 auto;
+    }
+
+    .dlg-foot {
+      padding: 16px 24px;
+      border-top: 1px solid #e4e4e4;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: #fafafa;
+    }
+
+    /* Admin CMS Styles */
+    .admin-login {
+      max-width: 400px;
+      margin: 16px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .admin-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .admin-field label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: #66625c;
+    }
+
+    .admin-field input[type="text"],
+    .admin-field input[type="password"],
+    .admin-field input[type="number"],
+    .admin-field input[type="url"] {
+      height: 40px;
+      padding: 0 14px;
+      border: 1px solid #c8c8c8;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 13px;
+      color: #151413;
+      transition: border-color 0.18s ease;
+    }
+
+    .admin-field input:focus {
+      border-color: #151413;
+    }
+
+    .admin-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .admin-tab {
+      padding: 10px 8px;
+      border: 1px solid #c8c8c8;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: #fff;
+      transition: all 0.18s ease;
+    }
+
+    .admin-tab.is-active {
+      background: #151413;
+      color: #fff;
+      border-color: #151413;
+    }
+
+    .admin-grid-top {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e4e4e4;
+      margin-bottom: 20px;
+    }
+
+    .admin-bag-preview {
+      position: relative;
+      background: #f5f5f4;
+      border: 1px solid #e4e4e4;
+      border-radius: 8px;
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .admin-bag-preview img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+
+    .admin-specs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .admin-spec-card {
+      border: 1px solid #e4e4e4;
+      border-radius: 10px;
+      padding: 14px;
+      background: #fcfcfb;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .admin-spec-card h4 {
+      margin: 0;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e4e4e4;
+    }
+
+    .admin-pin-coords {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      padding: 10px 20px;
+      background: #151413;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      transition: background-color 0.18s ease, transform 0.18s ease;
+    }
+
+    .btn-outline {
+      padding: 9px 16px;
+      border: 1px solid #c8c8c8;
+      border-radius: 8px;
+      background: #fff;
+      color: #151413;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      transition: border-color 0.18s ease, background-color 0.18s ease;
+    }
+
+    .btn-outline:hover {
+      border-color: #151413;
+    }
+
+    /* Toast (#bag-status) */
+    #bag-status {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #151413;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      z-index: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    #bag-status.is-visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 1099px) {
+      .rw__head {
+        padding: 16px 28px 0;
+      }
+      .rw__controls {
+        padding: 0 28px 20px;
+      }
+      .admin-specs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 749px) {
+      .site-header {
+        min-height: 66px;
+        padding: 10px 16px;
+        gap: 12px;
+      }
+      .site-header .brand {
+        gap: 10px;
+      }
+      .site-header .brand img {
+        width: 38px;
+        height: 38px;
+      }
+      .site-header .brand-text {
+        font-size: 11px;
+        letter-spacing: 0.02em;
+        white-space: normal;
+        line-height: 1.25;
+        max-width: 230px;
+      }
+      .site-header .brand-subtext {
+        font-size: 8.5px;
+        letter-spacing: 0.02em;
+        white-space: normal;
+        line-height: 1.25;
+        max-width: 230px;
+      }
+      #open-admin span {
+        display: none;
+      }
+      #open-admin {
+        padding: 8px 10px;
+      }
+
+      runway-section.rw {
+        --rw-h: var(--rw-h-m, 24px);
+        --rw-sub: var(--rw-sub-m, 12px);
+        --rw-eyebrow: var(--rw-eyebrow-m, 10px);
+        --rw-label: var(--rw-label-m, 9px);
+        --rw-chip: var(--rw-chip-m, 18px);
+        --rw-ph: var(--rw-ph-m, 16px);
+        --rw-pt-size: var(--rw-pt-size-m, 12px);
+        --rw-price: var(--rw-price-m, 12px);
+        --rw-opt: var(--rw-opt-m, 11px);
+        --rw-total: var(--rw-total-m, 16px);
+        --rw-thumb: var(--rw-thumb-m, 62px);
+      }
+
+      .rw__grid {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .rw__left {
+        flex: 1 1 auto;
+      }
+
+      .rw__head {
+        padding: 10px 16px 0;
+      }
+
+      .rw__controls {
+        display: none;
+      }
+
+      .rw__walk {
+        display: block;
+      }
+
+      .rw__panel {
+        height: 250px;
+        flex-shrink: 0;
+        border-left: 0 !important;
+        border-top: 1px solid var(--rw-c-line, #c8c8c8);
+        border-radius: var(--rw-bar-r, 20px) var(--rw-bar-r, 20px) 0 0;
+        box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+      }
+
+      .rw__panel-head {
+        display: none;
+      }
+
+      .rw__mhead {
+        display: flex;
+      }
+
+      .rw__items {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+        padding: 0 20px 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+      }
+
+      .rw__item {
+        flex: 0 0 265px;
+        scroll-snap-align: start;
+        border: 1px solid #e4e4e4;
+        padding: 10px;
+        column-gap: 12px;
+      }
+
+      .rw__bundle {
+        padding: 14px 20px 16px;
+      }
+
+      .rw__bundle-row {
+        display: flex;
+        font-size: 11px;
+      }
+
+      .rw__lb {
+        padding: 20px;
+      }
+
+      .admin-grid-top {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 1. Site Header -->
+  <header class="site-header shopify-section-group-header-group">
+    <a href="./" class="brand" aria-label="CÔNG TY CỔ PHẦN THÁI VIỆT CORPORATION">
+      <img id="brand-logo-img" src="/assets/brand/thai-viet-logo.png" width="48" height="48" alt="Thái Việt Corporation Logo">
+      <div class="brand-text-wrap">
+        <span class="brand-text">CÔNG TY CỔ PHẦN THÁI VIỆT CORPORATION</span>
+        <span class="brand-subtext">HỆ THỐNG THỨC ĂN CHĂN NUÔI CHUẨN CÔNG THỨC ĐẾN TỪ THÁI LAN</span>
+      </div>
+    </a>
+    <button id="open-admin" type="button" aria-label="Mở trang Quản trị CMS">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+      <span>Quản trị</span>
+    </button>
+  </header>
+
+  <!-- 2. Main holding <runway-section> -->
+  <main>
+    <runway-section
+      id="Runway-template--28035983671601__the_runway_wdM8BG"
+      class="rw rw--add-icon rw--popup rw--list has-dividers has-border"
+      data-feel="balanced"
+      data-blur="true"
+      data-mblur="true"
+      data-style="ring"
+      data-mstyle="classic"
+      data-fit="true"
+      data-height-mode="original"
+      data-height-vh="100"
+      data-mheight-mode="custom"
+      data-mheight-vh="109"
+      data-reflect="false"
+      data-autoplay="true"
+      data-speed="5000"
+      data-after-add="stay"
+      data-bundle-code=""
+      data-msg-choose="Xác nhận chỉ tiêu cho: [items]"
+      data-msg-error="Không thể lưu thông số kỹ thuật. Vui lòng thử lại."
+      data-msg-soldout="Tạm hết hàng"
+      style="--rw-c-stage:#ffffff;--rw-c-panel:#ffffff;--rw-c-text:#151413;--rw-c-muted:#66625c;--rw-c-accent:#0e0e0e;--rw-c-on-accent:#ffffff;--rw-c-line:#c8c8c8;--rw-card:#DFDFDF;--rw-hf:var(--font-heading--family, inherit);--rw-hw:600;--rw-h-d:46px;--rw-h-m:24px;--rw-sub-d:12px;--rw-sub-m:12px;--rw-eyebrow-d:11px;--rw-eyebrow-m:10px;--rw-label-d:10px;--rw-label-m:9px;--rw-chip-d:17px;--rw-chip-m:18px;--rw-ph-d:18px;--rw-ph-m:16px;--rw-pt-size-d:13px;--rw-pt-size-m:12px;--rw-price-d:12px;--rw-price-m:12px;--rw-opt-d:11px;--rw-opt-m:11px;--rw-total-d:16px;--rw-total-m:16px;--rw-thumb-d:92px;--rw-thumb-m:62px;--rw-tag-top:18px;--rw-tag-left:0px;--rw-thumb-radius:8px;--rw-morph:900ms;--rw-bar-r:20px;--rw-panel-w:380px;--rw-panel-pad-d:32px;--rw-radius:8px;--rw-max:none;--rw-speed:5s;--rw-ax:40%;--rw-btn-radius:8px;--rw-pill-radius:30px;--rw-add-radius:20px;"
+    >
+      <div class="rw__sticky" data-rw-sticky>
+        <div class="rw__grid">
+          <!-- Left Column: Stage & Controls -->
+          <div class="rw__left">
+            <div class="rw__head">
+              <span class="rw__sr" aria-live="polite" aria-atomic="true" data-rw-live>Bao cám 1: Cám 414 — Heo Choai (15–30kg)</span>
+            </div>
+
+            <div class="rw__stage" data-rw-stage tabindex="0" role="region" aria-roledescription="carousel" aria-label="Dinh Dưỡng Đàn Nuôi — Sử dụng phím mũi tên hoặc kéo chuột/vuốt tay để chuyển đổi bao cám">
+              <!-- Queue Bodies (6 originals; 6 clones appended by script) -->
+              <div class="rw__actors" data-rw-actors>
+                <div class="rw__model is-front" data-rw-model data-index="0" data-look-key="bndthK" style="--rw-ar:0.5625">
+                  <div class="rw__model-inner">
+                    <span class="rw__ground" aria-hidden="true"></span>
+                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 414 — Heo Choai (15–30kg)">
+                  </div>
+                </div>
+                <div class="rw__model" data-rw-model data-index="1" data-look-key="XckgG6" style="--rw-ar:0.5625">
+                  <div class="rw__model-inner">
+                    <span class="rw__ground" aria-hidden="true"></span>
+                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-5.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 415 — Heo Thịt Phát Triển (30–60kg)">
+                  </div>
+                </div>
+                <div class="rw__model" data-rw-model data-index="2" data-look-key="rLfAhC" style="--rw-ar:0.5625">
+                  <div class="rw__model-inner">
+                    <span class="rw__ground" aria-hidden="true"></span>
+                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-4.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 418 — Heo Xuất Chuồng (60kg–Bán)">
+                  </div>
+                </div>
+                <div class="rw__model" data-rw-model data-index="3" data-look-key="FKg67q" style="--rw-ar:0.5625">
+                  <div class="rw__model-inner">
+                    <span class="rw__ground" aria-hidden="true"></span>
+                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-6.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 412 — Heo Con Tập Ăn (7–15kg)">
+                  </div>
+                </div>
+                <div class="rw__model" data-rw-model data-index="4" data-look-key="8KREEE" style="--rw-ar:0.5625">
+                  <div class="rw__model-inner">
+                    <span class="rw__ground" aria-hidden="true"></span>
+                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-3.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 416 — Heo Nái Mang Thai">
+                  </div>
+                </div>
+                <div class="rw__model" data-rw-model data-index="5" data-look-key="N3bfm9" style="--rw-ar:0.5625">
+                  <div class="rw__model-inner">
+                    <span class="rw__ground" aria-hidden="true"></span>
+                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-2.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 420 — Heo Nái Nuôi Con &amp; Tiết Sữa">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Heroes (6 interactive figures with numbered specification pins) -->
+              <div class="rw__heroes" data-rw-heroes>
+                <!-- Hero 0: Cám 414 -->
+                <div class="rw__hero is-active" data-rw-hero data-index="0" data-name="Cám 414 — Heo Choai (15–30kg)" data-probe="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" style="--rw-ar:0.5625">
+                  <figure class="rw__figure" data-rw-figure>
+                    <span class="rw__ground" aria-hidden="true"></span>
+                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 414 — Heo Choai (15–30kg)">
+                    <button type="button" class="rw__pin" data-rw-pin="1" data-tip="Đối tượng: Heo choai (15–30 kg)" style="left:47%;top:27%;--pin-i:0" aria-label="Chỉ tiêu 1: Đối tượng: Heo choai (15–30 kg)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">1</span></button>
+                    <button type="button" class="rw__pin" data-rw-pin="2" data-tip="Độ tuổi: 45–70 Ngày (Giai đoạn 15–30 kg)" style="left:48%;top:58%;--pin-i:1" aria-label="Chỉ tiêu 2: Độ tuổi: 45–70 Ngày (Giai đoạn 15–30 kg)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">2</span></button>
+                    <button type="button" class="rw__pin" data-rw-pin="3" data-tip="Dinh dưỡng: 17.5%–19.0% Đạm thô · 3.250 kcal ME" style="left:45%;top:96%;--pin-i:2" aria-label="Chỉ tiêu 3: Dinh dưỡng: 17.5%–19.0% Đạm thô · 3.250 kcal ME"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">3</span></button>
+                  </figure>
+                </div>
+                <!-- Hero 1: Cám 415 -->
+                <div class="rw__hero" data-rw-hero data-index="1" data-name="Cám 415 — Heo Thịt Phát Triển (30–60kg)" data-probe="https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp" style="--rw-ar:0.5625">
+                  <figure class="rw__figure" data-rw-figure>
+                    <span class="rw__ground" aria-hidden="true"></span>
+                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-5.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 415 — Heo Thịt Phát Triển (30–60kg)">
+                    <button type="button" class="rw__pin" data-rw-pin="1" data-tip="Đối tượng: Heo thịt phát triển (30–60 kg)" style="left:50%;top:28%;--pin-i:0" aria-label="Chỉ tiêu 1: Đối tượng: Heo thịt phát triển (30–60 kg)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">1</span></button>
+                    <button type="button" class="rw__pin" data-rw-pin="2" data-tip="Độ tuổi: 70–110 Ngày (Giai đoạn 30–60 kg)" style="left:48%;top:58%;--pin-i:1" aria-label="Chỉ tiêu 2: Độ tuổi: 70–110 Ngày (Giai đoạn 30–60 kg)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">2</span></button>
+                    <button type="button" class="rw__pin" data-rw-pin="3" data-tip="Dinh dưỡng: 15.0%–16.5% Đạm thô · 3.150 kcal ME" style="left:45%;top:88%;--pin-i:2" aria-label="Chỉ tiêu 3: Dinh dưỡng: 15.0%–16.5% Đạm thô · 3.150 kcal ME"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">3</span></button>
+                  </figure>
+                </div>
+                <!-- Hero 2: Cám 418 -->
+                <div class="rw__hero" data-rw-hero data-index="2" data-name="Cám 418 — Heo Xuất Chuồng (60kg–Bán)" data-probe="https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp" style="--rw-ar:0.5625">
+                  <figure class="rw__figure" data-rw-figure>
+                    <span class="rw__ground" aria-hidden="true"></span>
+                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-4.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 418 — Heo Xuất Chuồng (60kg–Bán)">
+                    <button type="button" class="rw__pin" data-rw-pin="1" data-tip="Đối tượng: Heo thịt vỗ béo (Trên 60 kg)" style="left:50%;top:28%;--pin-i:0" aria-label="Chỉ tiêu 1: Đối tượng: Heo thịt vỗ béo (Trên 60 kg)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">1</span></button>
+                    <button type="button" class="rw__pin" data-rw-pin="2" data-tip="Độ tuổi: Trên 110 Ngày (60kg đến xuất bán)" style="left:48%;top:58%;--pin-i:1" aria-label="Chỉ tiêu 2: Độ tuổi: Trên 110 Ngày (60kg đến xuất bán)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">2</span></button>
+                    <button type="button" class="rw__pin" data-rw-pin="3" data-tip="Dinh dưỡng: 15.0%–16.5% Đạm thô · 3.150 kcal ME" style="left:45%;top:88%;--pin-i:2" aria-label="Chỉ tiêu 3: Dinh dưỡng: 15.0%–16.5% Đạm thô · 3.150 kcal ME"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">3</span></button>
+                  </figure>
+                </div>
+                <!-- Hero 3: Cám 412 -->
+                <div class="rw__hero" data-rw-hero data-index="3" data-name="Cám 412 — Heo Con Tập Ăn (7–15kg)" data-probe="https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp" style="--rw-ar:0.5625">
+                  <figure class="rw__figure" data-rw-figure>
+                    <span class="rw__ground" aria-hidden="true"></span>
+                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-6.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 412 — Heo Con Tập Ăn (7–15kg)">
+                    <button type="button" class="rw__pin" data-rw-pin="1" data-tip="Đối tượng: Heo con tập ăn (7–15 kg)" style="left:50%;top:28%;--pin-i:0" aria-label="Chỉ tiêu 1: Đối tượng: Heo con tập ăn (7–15 kg)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">1</span></button>
+                    <button type="button" class="rw__pin" data-rw-pin="2" data-tip="Độ tuổi: Tập ăn đến 45 Ngày tuổi" style="left:48%;top:58%;--pin-i:1" aria-label="Chỉ tiêu 2: Độ tuổi: Tập ăn đến 45 Ngày tuổi"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">2</span></button>
+                    <button type="button" class="rw__pin" data-rw-pin="3" data-tip="Dinh dưỡng: 19.5%–21.0% Đạm thô · 3.350 kcal ME" style="left:45%;top:88%;--pin-i:2" aria-label="Chỉ tiêu 3: Dinh dưỡng: 19.5%–21.0% Đạm thô · 3.350 kcal ME"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">3</span></button>
+                  </figure>
+                </div>
+                <!-- Hero 4: Cám 416 -->
+                <div class="rw__hero" data-rw-hero data-index="4" data-name="Cám 416 — Heo Nái Mang Thai" data-probe="https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp" style="--rw-ar:0.5625">
+                  <figure class="rw__figure" data-rw-figure>
+                    <span class="rw__ground" aria-hidden="true"></span>
+                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-3.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 416 — Heo Nái Mang Thai">
+                    <button type="button" class="rw__pin" data-rw-pin="1" data-tip="Đối tượng: Heo nái hậu bị &amp; mang thai" style="left:50%;top:28%;--pin-i:0" aria-label="Chỉ tiêu 1: Đối tượng: Heo nái hậu bị &amp; mang thai"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">1</span></button>
+                    <button type="button" class="rw__pin" data-rw-pin="2" data-tip="Giai đoạn: Phối giống &amp; mang thai 114 ngày" style="left:48%;top:58%;--pin-i:1" aria-label="Chỉ tiêu 2: Giai đoạn: Phối giống &amp; mang thai 114 ngày"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">2</span></button>
+                    <button type="button" class="rw__pin" data-rw-pin="3" data-tip="Dinh dưỡng: 14.5%–15.5% Đạm thô · 3.050 kcal ME" style="left:45%;top:88%;--pin-i:2" aria-label="Chỉ tiêu 3: Dinh dưỡng: 14.5%–15.5% Đạm thô · 3.050 kcal ME"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">3</span></button>
+                  </figure>
+                </div>
+                <!-- Hero 5: Cám 420 -->
+                <div class="rw__hero" data-rw-hero data-index="5" data-name="Cám 420 — Heo Nái Nuôi Con &amp; Tiết Sữa" data-probe="https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp" style="--rw-ar:0.5625">
+                  <figure class="rw__figure" data-rw-figure>
+                    <span class="rw__ground" aria-hidden="true"></span>
+                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-2.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 420 — Heo Nái Nuôi Con &amp; Tiết Sữa">
+                    <button type="button" class="rw__pin" data-rw-pin="1" data-tip="Đối tượng: Heo nái đẻ &amp; nuôi con tiết sữa" style="left:50%;top:28%;--pin-i:0" aria-label="Chỉ tiêu 1: Đối tượng: Heo nái đẻ &amp; nuôi con tiết sữa"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">1</span></button>
+                    <button type="button" class="rw__pin" data-rw-pin="2" data-tip="Giai đoạn: Nuôi con tiết sữa (21–28 ngày)" style="left:48%;top:58%;--pin-i:1" aria-label="Chỉ tiêu 2: Giai đoạn: Nuôi con tiết sữa (21–28 ngày)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">2</span></button>
+                    <button type="button" class="rw__pin" data-rw-pin="3" data-tip="Dinh dưỡng: 18.0%–19.5% Đạm thô · 3.300 kcal ME" style="left:45%;top:88%;--pin-i:2" aria-label="Chỉ tiêu 3: Dinh dưỡng: 18.0%–19.5% Đạm thô · 3.300 kcal ME"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">3</span></button>
+                  </figure>
+                </div>
+              </div>
+
+              <span class="rw__sweep" aria-hidden="true"></span>
+              <span class="rw__cursor" data-rw-cursor aria-hidden="true">
+                <span class="rw__cursor-in">
+                  <span class="rw__cursor-label rw__cursor-drag">Kéo</span>
+                  <span class="rw__cursor-label rw__cursor-view">Xem</span>
+                </span>
+              </span>
+              <span class="rw__walk" aria-hidden="true"><span class="rw__walk-line"></span></span>
+            </div>
+
+            <!-- 5.4 Controls Row -->
+            <div class="rw__controls">
+              <button type="button" class="rw__arrow rw__arrow--prev" data-rw-prev aria-label="Bao cám trước">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M15 18l-6-6 6-6"></path>
+                </svg>
+              </button>
+              <div class="rw__ticks" role="tablist" aria-label="Danh mục công thức cám">
+                <button type="button" class="rw__tick is-active" role="tab" data-rw-tick="0" aria-selected="true">
+                  <span class="rw__tick-num" data-rw-tick-label="0">01&nbsp;&nbsp;Cám 414 — Heo Choai (15–30kg)</span>
+                  <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
+                </button>
+                <button type="button" class="rw__tick" role="tab" data-rw-tick="1" aria-selected="false">
+                  <span class="rw__tick-num" data-rw-tick-label="1">02&nbsp;&nbsp;Cám 415 — Heo Thịt Phát Triển (30–60kg)</span>
+                  <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
+                </button>
+                <button type="button" class="rw__tick" role="tab" data-rw-tick="2" aria-selected="false">
+                  <span class="rw__tick-num" data-rw-tick-label="2">03&nbsp;&nbsp;Cám 418 — Heo Xuất Chuồng (60kg–Bán)</span>
+                  <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
+                </button>
+                <button type="button" class="rw__tick" role="tab" data-rw-tick="3" aria-selected="false">
+                  <span class="rw__tick-num" data-rw-tick-label="3">04&nbsp;&nbsp;Cám 412 — Heo Con Tập Ăn (7–15kg)</span>
+                  <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
+                </button>
+                <button type="button" class="rw__tick" role="tab" data-rw-tick="4" aria-selected="false">
+                  <span class="rw__tick-num" data-rw-tick-label="4">05&nbsp;&nbsp;Cám 416 — Heo Nái Mang Thai</span>
+                  <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
+                </button>
+                <button type="button" class="rw__tick" role="tab" data-rw-tick="5" aria-selected="false">
+                  <span class="rw__tick-num" data-rw-tick-label="5">06&nbsp;&nbsp;Cám 420 — Heo Nái Nuôi Con &amp; Tiết Sữa</span>
+                  <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
+                </button>
+              </div>
+              <button type="button" class="rw__auto" data-rw-auto aria-label="Tạm dừng tự động" aria-pressed="false">
+                <svg class="rw__ic-pause" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <rect x="6" y="4" width="4" height="16"></rect>
+                  <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+                <svg class="rw__ic-play" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <polygon points="6,4 20,12 6,20"></polygon>
+                </svg>
+              </button>
+              <button type="button" class="rw__arrow rw__arrow--next" data-rw-next aria-label="Bao cám tiếp theo">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M9 18l6-6-6-6"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- 11. FLIP Lightbox Popup -->
+            <div class="rw__lb" data-rw-lb data-word="Công thức" role="dialog" aria-modal="true" aria-label="Xem chi tiết thông số bao cám" hidden>
+              <div class="rw__lb-backdrop" data-rw-lb-close></div>
+              <div class="rw__lb-head">
+                <div class="rw__lb-meta">
+                  <span class="rw__lb-kicker" data-rw-lb-kicker>Công thức 01</span>
+                  <h4 class="rw__lb-title" data-rw-lb-title>Cám 414 — Heo Choai (15–30kg)</h4>
+                </div>
+                <button type="button" class="rw__lb-close" data-rw-lb-close aria-label="Đóng cửa sổ xem bao cám">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M18 6L6 18M6 6l12 12"></path>
+                  </svg>
+                  <span>Đóng</span>
+                </button>
+              </div>
+              <div class="rw__lb-stage" data-rw-lb-stage></div>
+              <p class="rw__lb-hint">Chạm vào điểm số trên bao bì để xem chi tiết chỉ tiêu</p>
+            </div>
+          </div>
+
+          <!-- 5.5 Right Column: "Thành phần công thức" Specification Panel -->
+          <aside class="rw__panel has-rule" data-rw-panel-wrap aria-label="Thành phần công thức">
+            <div class="rw__panel-inner">
+              <div class="rw__panel-head">
+                <h3 class="rw__panel-title">Thành phần công thức</h3>
+                <span class="rw__label" data-rw-pieces>3 chỉ tiêu</span>
+              </div>
+              <div class="rw__panels" data-rw-panels></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </runway-section>
+  </main>
+
+  <!-- 3. Password-Protected Admin CMS Modal (ID: admin / Password: adminsale) -->
+  <dialog id="admin-dialog" aria-labelledby="admin-dialog-title">
+    <div class="dlg-wrap">
+      <div class="dlg-head">
+        <h2 id="admin-dialog-title">Quản Trị Hệ Thống — Trưng Bày Sản Phẩm</h2>
+        <button type="button" class="dlg-close" data-admin-close>Đóng</button>
+      </div>
+      <div class="dlg-body">
+        <!-- View 1: Login Gate -->
+        <form id="admin-login-view" class="admin-login" autocomplete="on">
+          <p style="margin: 0; font-size: 12px; color: #66625c; line-height: 1.6;">
+            Đăng nhập bằng tài khoản bán hàng ủy quyền của nhà máy để tùy chỉnh thương hiệu công ty, hình ảnh bao bì cám, các trụ cột chỉ tiêu kỹ thuật và tọa độ các điểm pin.
+          </p>
+          <div class="admin-field">
+            <label for="admin-user">Tài khoản Quản trị</label>
+            <input type="text" id="admin-user" autocomplete="username" placeholder="Nhập tài khoản Quản trị" required>
+          </div>
+          <div class="admin-field">
+            <label for="admin-pass">Mật khẩu</label>
+            <input type="password" id="admin-pass" autocomplete="current-password" placeholder="Nhập mật khẩu" required>
+          </div>
+          <p id="admin-login-err" style="margin: 0; font-size: 12px; color: #b91c1c;" hidden>
+            Sai tài khoản hoặc mật khẩu. Vui lòng sử dụng thông tin ủy quyền được cấp.
+          </p>
+          <button type="submit" class="btn-primary" style="width: 100%; height: 42px;">Mở Khóa Quản Trị CMS</button>
+        </form>
+
+        <!-- View 2: Live Editor -->
+        <div id="admin-editor-view" hidden>
+          <!-- Brand Logo & Header Customization Section -->
+          <div style="padding: 16px 18px; background: #fcfcfb; border: 1px solid #e4e4e4; border-radius: 10px; margin-bottom: 20px;">
+            <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; color: #151413;">
+              Cài Đặt Thương Hiệu &amp; Logo Công Ty (Đầu Trang)
+            </div>
+            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+              <div style="width: 52px; height: 52px; background: #fff; border: 1px solid #e4e4e4; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                <img id="admin-brand-logo-preview" src="/assets/brand/thai-viet-logo.png" alt="Xem trước logo" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+              </div>
+              <div style="flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 6px;">
+                <label for="admin-brand-logo-url" style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #66625c;">Đường Dẫn Ảnh Logo (URL hoặc DataURL)</label>
+                <input type="text" id="admin-brand-logo-url" style="height: 38px; padding: 0 12px; border: 1px solid #c8c8c8; border-radius: 8px; font-size: 12px;" placeholder="/assets/brand/thai-viet-logo.png">
+              </div>
+              <label class="btn-outline" style="cursor: pointer; padding: 9px 14px; font-size: 11px; display: inline-flex; align-items: center;">
+                Tải Lên Ảnh Logo
+                <input type="file" id="admin-brand-logo-file" accept="image/png,image/webp,image/jpeg,image/svg+xml" hidden>
+              </label>
+            </div>
+          </div>
+
+          <!-- Slot Selector Tabs & Add Product Button -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #151413;">
+              Danh Sách Sản Phẩm Trưng Bày (<span id="admin-product-count">6</span> sản phẩm)
+            </div>
+            <button type="button" class="btn-primary" id="admin-add-product" style="padding: 7px 14px; font-size: 11px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              + Thêm Sản Phẩm Mới
+            </button>
+          </div>
+          <div class="admin-tabs" id="admin-slot-tabs" role="tablist" aria-label="Các vị trí bao cám trưng bày"></div>
+
+          <!-- Selected Bag Identity & Packaging Image Replacement -->
+          <div class="admin-grid-top">
+            <div>
+              <div class="admin-bag-preview" id="admin-bag-preview-box" title="Nhấp chuột vào ảnh bao cám để kiểm tra vị trí điểm pin">
+                <img id="admin-bag-preview-img" src="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" alt="Xem trước mẫu bao cám">
+              </div>
+              <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                <label class="btn-outline" style="text-align: center; cursor: pointer; display: block;">
+                  Tải File Bao Cám (PNG/WebP)
+                  <input type="file" id="admin-bag-file" accept="image/png,image/webp,image/jpeg" hidden>
+                </label>
+                <button type="button" class="btn-outline" id="admin-generate-bag-svg" style="font-size: 11px;">
+                  Tạo Mẫu Bao Bì PP Dệt 25kg
+                </button>
+                <button type="button" class="btn-outline" id="admin-delete-product" style="font-size: 11px; color: #b91c1c; border-color: #fca5a5;">
+                  Xóa Sản Phẩm Này
+                </button>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="admin-field">
+                  <label for="admin-bag-name">Tên Bao Cám (Tên hiển thị)</label>
+                  <input type="text" id="admin-bag-name">
+                </div>
+                <div class="admin-field">
+                  <label for="admin-bag-std">Huy Hiệu Tiêu Chuẩn Chất Lượng</label>
+                  <input type="text" id="admin-bag-std" placeholder="TCVN 1547 · ISO 22000">
+                </div>
+              </div>
+              <div class="admin-field">
+                <label for="admin-bag-img-640">Đường Dẫn Ảnh Cắt Bao Bì (640w &amp; Dò đáy)</label>
+                <input type="text" id="admin-bag-img-640" placeholder="https://... hoặc mã DataURL tải lên">
+              </div>
+              <div class="admin-field">
+                <label for="admin-bag-img-1080">Đường Dẫn Ảnh Độ Phân Giải Cao (1080w)</label>
+                <input type="text" id="admin-bag-img-1080" placeholder="https://... hoặc mã DataURL tải lên">
+              </div>
+              <p style="margin: 0; font-size: 11px; color: #66625c; line-height: 1.5;">
+                Mẹo: Khi tải lên file PNG/WebP hoặc bấm "Tạo Mẫu Bao Bì PP Dệt 25kg", hệ thống sẽ tự động cập nhật mô hình sân khấu 3D, bản sao và tính toán lại bóng tiếp đất bằng thuật toán alpha.
+              </p>
+            </div>
+          </div>
+
+          <!-- 3 Specification Pillars Editor -->
+          <div class="admin-specs-grid" id="admin-specs-container"></div>
+        </div>
+      </div>
+
+      <!-- Admin Footer Actions -->
+      <div class="dlg-foot" id="admin-editor-foot" hidden>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <button type="button" class="btn-outline" id="admin-export-json">Xuất File JSON</button>
+          <label class="btn-outline" style="cursor: pointer; display: inline-flex; align-items: center;">
+            Nhập File JSON
+            <input type="file" id="admin-import-json" accept="application/json" hidden>
+          </label>
+          <button type="button" class="btn-outline" id="admin-reset-defaults">Khôi Phục Mặc Định Nhà Máy</button>
+          <button type="button" class="btn-outline" id="admin-logout">Đăng Xuất</button>
+        </div>
+        <button type="button" class="btn-primary" id="admin-save-apply">Lưu &amp; Áp Dụng Thay Đổi</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 5. Toast Status -->
+  <div id="bag-status" role="status" aria-live="polite"></div>
+
+  <!-- 6. Deferred Script -->
+  <script type="module" src="/src/main.tsx" defer></script>
+</body>
+</html>
