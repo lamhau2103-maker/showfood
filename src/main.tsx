@@ -7,7 +7,7 @@
  * - Header: CÔNG TY CỔ PHẦN THÁI VIỆT CORPORATION + Brand Logo (Customizable via Admin)
  * - Navigation & Bag completely removed; Admin button aligned to far right
  * - Specification rows: 2-column layout without + button or pickers; clicking highlights corresponding pin
- * - Static Certification Footer: Complete Technical Datasheet / TCVN 1547 · ISO 22000
+ * - Static Certification Footer: Cam Kết Đạt Chuẩn Công Thức Thái Lan / Đạt Chuẩn ISO 22000
  */
 
 export interface SpecOption {
@@ -224,7 +224,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp',
       offsetY: 0,
       pieces: '3 chỉ tiêu',
-      qualityStd: 'TCVN 1547 · ISO 22000',
+      qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
         makeSpec('tatum-5-orbit-copy', 47, 27, ''),
         makeSpec('tshirt', 48, 58, ''),
@@ -240,7 +240,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-5.webp',
       offsetY: 0,
       pieces: '3 chỉ tiêu',
-      qualityStd: 'TCVN 1547 · ISO 22000',
+      qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
         makeSpec('tatum-5-orbit', 50, 28, ''),
         makeSpec('sweatshirt', 48, 58, 'Mới'),
@@ -256,7 +256,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-4.webp',
       offsetY: 0,
       pieces: '3 chỉ tiêu',
-      qualityStd: 'TCVN 1547 · ISO 22000',
+      qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
         makeSpec('tatum-5-orbit', 50, 28, ''),
         makeSpec('sweatshirt-plus', 48, 58, 'Mới'),
@@ -272,7 +272,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-6.webp',
       offsetY: 0,
       pieces: '3 chỉ tiêu',
-      qualityStd: 'TCVN 1547 · ISO 22000',
+      qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
         makeSpec('air-jordan-12-retro-copy', 50, 28, ''),
         makeSpec('tshirt', 48, 58, ''),
@@ -288,7 +288,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-3.webp',
       offsetY: 0,
       pieces: '3 chỉ tiêu',
-      qualityStd: 'TCVN 1547 · ISO 22000',
+      qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
         makeSpec('air-jordan-12-retro-copy', 50, 28, ''),
         makeSpec('sweatshirt-plus', 48, 58, ''),
@@ -304,7 +304,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-2.webp',
       offsetY: 0,
       pieces: '3 chỉ tiêu',
-      qualityStd: 'TCVN 1547 · ISO 22000',
+      qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
         makeSpec('air-jordan-12-retro-copy', 50, 28, ''),
         makeSpec('sweatshirt', 48, 58, ''),
@@ -329,6 +329,17 @@ export function loadCmsData(): FeedBagLook[] {
         const def = getDefaultLooks();
         saveCmsData(def);
         return def;
+      }
+      // Migrate old qualityStd if matching previous default
+      let migrated = false;
+      parsed.forEach((look: FeedBagLook) => {
+        if (look.qualityStd === 'TCVN 1547 · ISO 22000' || !look.qualityStd) {
+          look.qualityStd = 'Đạt Chuẩn ISO 22000';
+          migrated = true;
+        }
+      });
+      if (migrated) {
+        saveCmsData(parsed);
       }
       return parsed;
     }
@@ -785,7 +796,7 @@ export class RunwaySection extends HTMLElement {
         <div class="rw__bundle has-rule">
           <div class="rw__bundle-row">
             <div class="rw__bundle-copy">
-              <span class="rw__bundle-title">Bảng Thông Số Kỹ Thuật Toàn Diện</span>
+              <span class="rw__bundle-title">Cam Kết Đạt Chuẩn Công Thức Thái Lan</span>
               <span class="rw__bundle-note">Chứng nhận tiêu chuẩn nhà máy xuất xưởng · Bao PP dệt 25kg</span>
             </div>
             <span class="rw__bundle-price"><strong>${escapeHtml(look.qualityStd)}</strong></span>
@@ -1877,7 +1888,7 @@ class AdminCmsController {
         img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp',
         offsetY: 0,
         pieces: '3 chỉ tiêu',
-        qualityStd: 'TCVN 1547 · ISO 22000',
+        qualityStd: 'Đạt Chuẩn ISO 22000',
         specs: [
           makeSpec('tatum-5-orbit-copy', 48, 28, 'Mới'),
           makeSpec('tshirt', 48, 58, ''),
