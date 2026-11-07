@@ -39,6 +39,7 @@ export interface FeedBagLook {
   img640: string;
   img1080: string;
   offsetY?: number;
+  scale?: number;
   pieces: string;
   qualityStd: string;
   specs: [BagSpecItem, BagSpecItem, BagSpecItem];
@@ -223,6 +224,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp',
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp',
       offsetY: 0,
+      scale: 1,
       pieces: '3 chỉ tiêu',
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
@@ -239,6 +241,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp',
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-5.webp',
       offsetY: 0,
+      scale: 1,
       pieces: '3 chỉ tiêu',
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
@@ -255,6 +258,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp',
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-4.webp',
       offsetY: 0,
+      scale: 1,
       pieces: '3 chỉ tiêu',
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
@@ -271,6 +275,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp',
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-6.webp',
       offsetY: 0,
+      scale: 1,
       pieces: '3 chỉ tiêu',
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
@@ -287,6 +292,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp',
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-3.webp',
       offsetY: 0,
+      scale: 1,
       pieces: '3 chỉ tiêu',
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
@@ -303,6 +309,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp',
       img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-2.webp',
       offsetY: 0,
+      scale: 1,
       pieces: '3 chỉ tiêu',
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
@@ -572,6 +579,7 @@ export class RunwaySection extends HTMLElement {
         model.dataset.lookKey = look.key || `look_${i}`;
         model.style.setProperty('--rw-ar', '0.5625');
         model.style.setProperty('--rw-offset-y', `${look.offsetY ?? 0}%`);
+        model.style.setProperty('--rw-scale', `${look.scale ?? 1}`);
         model.innerHTML = `
           <div class="rw__model-inner">
             <span class="rw__ground" aria-hidden="true"></span>
@@ -593,6 +601,7 @@ export class RunwaySection extends HTMLElement {
         clone.dataset.lookKey = `${look.key || 'look'}_clone`;
         clone.style.setProperty('--rw-ar', '0.5625');
         clone.style.setProperty('--rw-offset-y', `${look.offsetY ?? 0}%`);
+        clone.style.setProperty('--rw-scale', `${look.scale ?? 1}`);
         clone.innerHTML = `
           <div class="rw__model-inner">
             <span class="rw__ground" aria-hidden="true"></span>
@@ -619,16 +628,17 @@ export class RunwaySection extends HTMLElement {
         hero.dataset.probe = look.img640;
         hero.style.setProperty('--rw-ar', '0.5625');
         hero.style.setProperty('--rw-offset-y', `${look.offsetY ?? 0}%`);
+        hero.style.setProperty('--rw-scale', `${look.scale ?? 1}`);
 
         const pinsHtml = look.specs
           .map((sp, pIdx) => {
             const pNum = pIdx + 1;
-            return `<button type="button" class="rw__pin" data-rw-pin="${pNum}" data-tip="${escapeAttr(sp.title)}" style="left:${sp.pinLeft}%;top:${sp.pinTop}%;--pin-i:${pIdx}" aria-label="Chỉ tiêu ${pNum}: ${escapeAttr(sp.title)}"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">${pNum}</span></button>`;
+            return `<button type="button" class="rw__pin" data-rw-pin="${pNum}" data-tip="${escapeAttr(sp.title)}" style="left:${sp.pinLeft}%;top:${sp.pinTop}%;--pin-x:${sp.pinLeft};--pin-y:${sp.pinTop};--pin-i:${pIdx}" aria-label="Chỉ tiêu ${pNum}: ${escapeAttr(sp.title)}"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">${pNum}</span></button>`;
           })
           .join('');
 
         hero.innerHTML = `
-          <figure class="rw__figure" data-rw-figure style="--rw-offset-y:${look.offsetY ?? 0}%">
+          <figure class="rw__figure" data-rw-figure style="--rw-offset-y:${look.offsetY ?? 0}%;--rw-scale:${look.scale ?? 1}">
             <span class="rw__ground" aria-hidden="true"></span>
             <img src="${escapeAttr(look.img640)}" srcset="${escapeAttr(look.img640)} 640w, ${escapeAttr(look.img1080 || look.img640)} 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="${escapeAttr(look.name)}">
             ${pinsHtml}
@@ -740,9 +750,11 @@ export class RunwaySection extends HTMLElement {
         const cloneBody = this.bodies[index + this.N];
         const hero = this.heroes[index];
         const offY = `${this.looks[index]?.offsetY ?? 0}%`;
+        const scaleVal = `${this.looks[index]?.scale ?? 1}`;
         [origBody, cloneBody, hero].forEach((el) => {
           el?.style.setProperty('--rw-foot', footPct);
           el?.style.setProperty('--rw-offset-y', offY);
+          el?.style.setProperty('--rw-scale', scaleVal);
         });
       } catch {
         // Fallback if canvas is tainted
@@ -1362,6 +1374,16 @@ class AdminCmsController {
     return sessionStorage.getItem(ADMIN_AUTH_KEY) === '1';
   }
 
+  private logout(): void {
+    sessionStorage.removeItem(ADMIN_AUTH_KEY);
+    const userEl = document.getElementById('admin-user') as HTMLInputElement | null;
+    const passEl = document.getElementById('admin-pass') as HTMLInputElement | null;
+    if (userEl) userEl.value = '';
+    if (passEl) passEl.value = '';
+    if (this.loginErr) this.loginErr.hidden = true;
+    this.updateAuthView();
+  }
+
   private openModal(): void {
     this.workingLooks = JSON.parse(JSON.stringify(loadCmsData()));
     this.currentBrandLogo = getBrandLogo();
@@ -1450,10 +1472,26 @@ class AdminCmsController {
       }
     }
 
+    const scale = look.scale ?? 1;
+    const scaleSlider = document.getElementById('admin-scale-slider') as HTMLInputElement | null;
+    const scaleBadge = document.getElementById('admin-scale-val-badge');
+    const scalePct = Math.round(scale * 100);
+    if (scaleSlider) scaleSlider.value = String(scalePct);
+    if (scaleBadge) {
+      if (scalePct > 100) {
+        scaleBadge.textContent = `${scalePct}% (+${scalePct - 100}%)`;
+      } else if (scalePct < 100) {
+        scaleBadge.textContent = `${scalePct}% (-${100 - scalePct}%)`;
+      } else {
+        scaleBadge.textContent = '100% (Chuẩn)';
+      }
+    }
+
     if (previewImg) {
       previewImg.src = look.img640;
       previewImg.style.setProperty('--admin-preview-offset-y', `${offsetY}%`);
-      previewImg.style.transform = `translateY(${offsetY}%)`;
+      previewImg.style.setProperty('--admin-preview-scale', `${scale}`);
+      previewImg.style.transform = `translateY(${offsetY}%) scale(${scale})`;
     }
 
     if (!this.specsContainerEl) return;
@@ -1549,6 +1587,12 @@ class AdminCmsController {
     const offsetSlider = document.getElementById('admin-offset-slider') as HTMLInputElement | null;
     if (offsetSlider) {
       look.offsetY = parseFloat(offsetSlider.value) || 0;
+    }
+
+    const scaleSlider = document.getElementById('admin-scale-slider') as HTMLInputElement | null;
+    if (scaleSlider) {
+      const val = parseFloat(scaleSlider.value) || 100;
+      look.scale = Math.round(clamp(val, 50, 150)) / 100;
     }
 
     if (!this.specsContainerEl) return;
@@ -1849,11 +1893,21 @@ class AdminCmsController {
     });
 
     this.dialog?.querySelectorAll('[data-admin-close]').forEach((btn) => {
-      btn.addEventListener('click', () => this.dialog?.close());
+      btn.addEventListener('click', () => {
+        this.logout();
+        this.dialog?.close();
+      });
     });
 
     this.dialog?.addEventListener('click', (e) => {
-      if (e.target === this.dialog) this.dialog?.close();
+      if (e.target === this.dialog) {
+        this.logout();
+        this.dialog?.close();
+      }
+    });
+
+    this.dialog?.addEventListener('close', () => {
+      this.logout();
     });
 
     // Login Form Submit (ID: Admin / admin, Password: adminsale)
@@ -1887,6 +1941,7 @@ class AdminCmsController {
         img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp',
         img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp',
         offsetY: 0,
+        scale: 1,
         pieces: '3 chỉ tiêu',
         qualityStd: 'Đạt Chuẩn ISO 22000',
         specs: [
@@ -1899,7 +1954,7 @@ class AdminCmsController {
       this.selectedSlot = this.workingLooks.length - 1;
       this.renderSlotTabs();
       this.renderSelectedSlotEditor();
-      showToast(`Đã thêm sản phẩm #${newIdx + 1} — hãy tùy chỉnh và bấm Lưu & Áp Dụng`);
+      showToast(`Đã thêm sản phẩm #${newIdx + 1} — hãy tùy chỉnh và bấm LƯU`);
     });
 
     // Delete current product button (Xóa Sản Phẩm Này)
@@ -1916,7 +1971,7 @@ class AdminCmsController {
       this.selectedSlot = Math.min(this.selectedSlot, this.workingLooks.length - 1);
       this.renderSlotTabs();
       this.renderSelectedSlotEditor();
-      showToast(`Đã xóa "${currentName}" — bấm Lưu & Áp Dụng để cập nhật`);
+      showToast(`Đã xóa "${currentName}" — bấm LƯU để cập nhật`);
     });
 
     // Brand Logo URL preview update
@@ -1940,7 +1995,7 @@ class AdminCmsController {
         const previewImg = document.getElementById('admin-brand-logo-preview') as HTMLImageElement | null;
         if (urlInput) urlInput.value = dataUrl;
         if (previewImg) previewImg.src = dataUrl;
-        showToast('Đã tải ảnh logo — bấm "Lưu & Áp Dụng Thay Đổi"');
+        showToast('Đã tải ảnh logo — bấm "LƯU" để cập nhật');
       });
     });
 
@@ -1970,13 +2025,27 @@ class AdminCmsController {
           look.img640 = dataUrl;
           look.img1080 = dataUrl;
         }
-        showToast('Đã tải ảnh bao bì — bấm "Lưu & Áp Dụng Thay Đổi" để cập nhật');
+        showToast('Đã tải ảnh bao bì — bấm "LƯU" để cập nhật');
       });
     });
 
-    // Real-time Vertical Offset Tuning (Lên / Xuống)
+    // Real-time Vertical Offset Tuning (Lên / Xuống) & Scale Tuning (Phóng To / Nhỏ)
     const offsetSlider = document.getElementById('admin-offset-slider') as HTMLInputElement | null;
     const offsetBadge = document.getElementById('admin-offset-val-badge');
+    const scaleSlider = document.getElementById('admin-scale-slider') as HTMLInputElement | null;
+    const scaleBadge = document.getElementById('admin-scale-val-badge');
+
+    const updatePreviewTransform = () => {
+      const look = this.workingLooks[this.selectedSlot];
+      const offsetY = look ? (look.offsetY ?? 0) : 0;
+      const scale = look ? (look.scale ?? 1) : 1;
+      const previewImg = document.getElementById('admin-bag-preview-img') as HTMLImageElement | null;
+      if (previewImg) {
+        previewImg.style.setProperty('--admin-preview-offset-y', `${offsetY}%`);
+        previewImg.style.setProperty('--admin-preview-scale', `${scale}`);
+        previewImg.style.transform = `translateY(${offsetY}%) scale(${scale})`;
+      }
+    };
 
     const applyOffsetVal = (val: number) => {
       const clamped = clamp(Math.round(val * 2) / 2, -30, 30);
@@ -1992,11 +2061,25 @@ class AdminCmsController {
           offsetBadge.textContent = '0% (Chuẩn)';
         }
       }
-      const previewImg = document.getElementById('admin-bag-preview-img') as HTMLImageElement | null;
-      if (previewImg) {
-        previewImg.style.setProperty('--admin-preview-offset-y', `${clamped}%`);
-        previewImg.style.transform = `translateY(${clamped}%)`;
+      updatePreviewTransform();
+    };
+
+    const applyScaleVal = (val: number) => {
+      const clampedPct = clamp(Math.round(val), 50, 150);
+      const scale = clampedPct / 100;
+      const look = this.workingLooks[this.selectedSlot];
+      if (look) look.scale = scale;
+      if (scaleSlider) scaleSlider.value = String(clampedPct);
+      if (scaleBadge) {
+        if (clampedPct > 100) {
+          scaleBadge.textContent = `${clampedPct}% (+${clampedPct - 100}%)`;
+        } else if (clampedPct < 100) {
+          scaleBadge.textContent = `${clampedPct}% (-${100 - clampedPct}%)`;
+        } else {
+          scaleBadge.textContent = '100% (Chuẩn)';
+        }
       }
+      updatePreviewTransform();
     };
 
     offsetSlider?.addEventListener('input', () => {
@@ -2017,96 +2100,40 @@ class AdminCmsController {
       applyOffsetVal(0);
     });
 
-    // Save & Apply Changes
+    // Scale controls: Phóng to / Thu nhỏ (đồng nhất tỉ lệ ngang - dọc)
+    scaleSlider?.addEventListener('input', () => {
+      applyScaleVal(parseFloat(scaleSlider.value) || 100);
+    });
+
+    document.getElementById('admin-scale-up')?.addEventListener('click', () => {
+      const cur = parseFloat(scaleSlider?.value || '100') || 100;
+      applyScaleVal(cur + 5);
+    });
+
+    document.getElementById('admin-scale-down')?.addEventListener('click', () => {
+      const cur = parseFloat(scaleSlider?.value || '100') || 100;
+      applyScaleVal(cur - 5);
+    });
+
+    document.getElementById('admin-scale-reset')?.addEventListener('click', () => {
+      applyScaleVal(100);
+    });
+
+    // Save (LƯU)
     document.getElementById('admin-save-apply')?.addEventListener('click', () => {
       this.commitCurrentSlotInputs();
       saveCmsData(this.workingLooks);
       setBrandLogo(this.currentBrandLogo);
       const rw = document.querySelector('runway-section') as RunwaySection | null;
       rw?.applyCmsChanges(this.workingLooks);
+      this.logout();
       this.dialog?.close();
-      showToast(`Đã cập nhật hệ thống (${this.workingLooks.length} sản phẩm) & thương hiệu thành công`);
+      showToast(`Đã lưu ${this.workingLooks.length} sản phẩm & cập nhật thương hiệu thành công`);
     });
 
-    // Export JSON
-    document.getElementById('admin-export-json')?.addEventListener('click', () => {
-      this.commitCurrentSlotInputs();
-      const exportPayload = {
-        brandLogo: this.currentBrandLogo,
-        looks: this.workingLooks,
-      };
-      const blob = new Blob([JSON.stringify(exportPayload, null, 2)], {
-        type: 'application/json',
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'runway-feed-cms-v1.json';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      showToast('Đã xuất file cấu hình runway-feed-cms-v1.json');
-    });
-
-    // Import JSON
-    const importInput = document.getElementById('admin-import-json') as HTMLInputElement | null;
-    importInput?.addEventListener('change', () => {
-      const file = importInput.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const parsed = JSON.parse(String(reader.result || ''));
-          let looksToImport: FeedBagLook[] | null = null;
-          if (Array.isArray(parsed) && parsed.length >= 1) {
-            looksToImport = parsed;
-          } else if (parsed && Array.isArray(parsed.looks) && parsed.looks.length >= 1) {
-            looksToImport = parsed.looks;
-            if (typeof parsed.brandLogo === 'string' && parsed.brandLogo) {
-              this.currentBrandLogo = parsed.brandLogo;
-              setBrandLogo(this.currentBrandLogo);
-            }
-          }
-
-          if (looksToImport) {
-            this.workingLooks = looksToImport;
-            saveCmsData(this.workingLooks);
-            this.renderBrandLogoFields();
-            this.renderSlotTabs();
-            this.renderSelectedSlotEditor();
-            const rw = document.querySelector('runway-section') as RunwaySection | null;
-            rw?.applyCmsChanges(this.workingLooks);
-            showToast(`Đã nhập ${this.workingLooks.length} sản phẩm từ file JSON`);
-          } else {
-            showToast('Định dạng file JSON không hợp lệ');
-          }
-        } catch {
-          showToast('Không thể đọc file JSON');
-        }
-      };
-      reader.readAsText(file);
-    });
-
-    // Reset to Factory Defaults
-    document.getElementById('admin-reset-defaults')?.addEventListener('click', () => {
-      localStorage.removeItem(CMS_STORAGE_KEY);
-      localStorage.removeItem(BRAND_LOGO_KEY);
-      this.workingLooks = getDefaultLooks();
-      this.currentBrandLogo = DEFAULT_BRAND_LOGO;
-      setBrandLogo(DEFAULT_BRAND_LOGO);
-      this.renderBrandLogoFields();
-      this.renderSlotTabs();
-      this.renderSelectedSlotEditor();
-      const rw = document.querySelector('runway-section') as RunwaySection | null;
-      rw?.applyCmsChanges(this.workingLooks);
-      showToast('Đã khôi phục cài đặt gốc của nhà máy');
-    });
-
-    // Logout
+    // Logout (Đăng Xuất)
     document.getElementById('admin-logout')?.addEventListener('click', () => {
-      sessionStorage.removeItem(ADMIN_AUTH_KEY);
-      this.updateAuthView();
+      this.logout();
       this.dialog?.close();
       showToast('Đã đăng xuất khỏi Quản Trị CMS');
     });

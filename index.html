@@ -326,7 +326,8 @@
       user-select: none;
       -webkit-user-drag: none;
       opacity: 0;
-      transform: translateY(calc(var(--rw-foot, 0%) + var(--rw-offset-y, 0%)));
+      transform-origin: 50% 100%;
+      transform: translateY(calc(var(--rw-foot, 0%) + var(--rw-offset-y, 0%))) scale(var(--rw-scale, 1));
       filter: drop-shadow(0 14px 24px rgba(21, 20, 19, 0.08));
     }
 
@@ -370,14 +371,21 @@
       pointer-events: auto;
       cursor: pointer;
       opacity: 0;
-      transform: translateY(calc(var(--rw-foot, 0%) + var(--rw-offset-y, 0%))) scale(0.4);
+      transform-origin: 50% 100%;
+      transform: translate(
+        calc((var(--pin-x, 50) - 50) * (var(--rw-scale, 1) - 1) * 1%),
+        calc((var(--pin-y, 50) - 100) * (var(--rw-scale, 1) - 1) * 1% + var(--rw-foot, 0%) + var(--rw-offset-y, 0%))
+      ) scale(0.4);
       transition: transform 0.45s var(--rw-ease-spring), opacity 0.35s var(--rw-ease);
       transition-delay: calc(var(--rw-pin-base, 0.15s) + var(--pin-i, 0) * 0.07s);
     }
 
     .rw__lb.is-open .rw__pin {
       opacity: 1;
-      transform: translateY(calc(var(--rw-foot, 0%) + var(--rw-offset-y, 0%))) scale(1);
+      transform: translate(
+        calc((var(--pin-x, 50) - 50) * (var(--rw-scale, 1) - 1) * 1%),
+        calc((var(--pin-y, 50) - 100) * (var(--rw-scale, 1) - 1) * 1% + var(--rw-foot, 0%) + var(--rw-offset-y, 0%))
+      ) scale(1);
     }
 
     .rw__pin-dot {
@@ -1288,7 +1296,8 @@
       max-width: 90%;
       max-height: 90%;
       object-fit: contain;
-      transform: translateY(var(--admin-preview-offset-y, 0%));
+      transform-origin: 50% 100%;
+      transform: translateY(var(--admin-preview-offset-y, 0%)) scale(var(--admin-preview-scale, 1));
       transition: transform 0.08s ease-out;
     }
 
@@ -1840,30 +1849,60 @@
               <div class="admin-bag-preview" id="admin-bag-preview-box" title="Nhấp chuột vào ảnh bao cám để kiểm tra vị trí điểm pin">
                 <img id="admin-bag-preview-img" src="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" alt="Xem trước mẫu bao cám">
               </div>
-              <!-- Tinh chỉnh vị trí Lên / Xuống -->
-              <div class="admin-offset-card" style="margin-top: 10px; background: #fafaf9; border: 1px solid #e7e5e4; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 11px; font-weight: 700; color: #151413; text-transform: uppercase; letter-spacing: 0.04em;">Vị Trí Lên / Xuống</span>
-                  <span id="admin-offset-val-badge" style="font-size: 11px; font-weight: 600; color: #151413; background: #e7e5e4; padding: 2px 7px; border-radius: 4px; font-variant-numeric: tabular-nums;">0% (Chuẩn)</span>
+              <!-- Tinh chỉnh Kích Thước (Phóng To / Thu Nhỏ) & Vị Trí (Lên / Xuống) -->
+              <div class="admin-offset-card" style="margin-top: 10px; background: #fafaf9; border: 1px solid #e7e5e4; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 10px;">
+                <!-- 1. Kích Thước (Phóng To / Thu Nhỏ) -->
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 11px; font-weight: 700; color: #151413; text-transform: uppercase; letter-spacing: 0.04em;">Kích Thước (Phóng To / Nhỏ)</span>
+                    <span id="admin-scale-val-badge" style="font-size: 11px; font-weight: 600; color: #151413; background: #e7e5e4; padding: 2px 7px; border-radius: 4px; font-variant-numeric: tabular-nums;">100% (Chuẩn)</span>
+                  </div>
+                  <div style="display: flex; gap: 6px; align-items: center;">
+                    <button type="button" class="btn-outline" id="admin-scale-up" title="Phóng to sản phẩm (giữ chuẩn tỷ lệ ngang/dọc)" style="flex: 1; padding: 6px 8px; font-size: 11px; font-weight: 600; text-align: center;">
+                      + Phóng To
+                    </button>
+                    <button type="button" class="btn-outline" id="admin-scale-down" title="Thu nhỏ sản phẩm (giữ chuẩn tỷ lệ ngang/dọc)" style="flex: 1; padding: 6px 8px; font-size: 11px; font-weight: 600; text-align: center;">
+                      − Thu Nhỏ
+                    </button>
+                    <button type="button" class="btn-outline" id="admin-scale-reset" title="Đặt lại kích thước gốc 100%" style="padding: 6px 10px; font-size: 11px; color: #66625c;">
+                      100%
+                    </button>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 10px; color: #78716c; font-weight: 600;">50%</span>
+                    <input type="range" id="admin-scale-slider" min="50" max="150" step="1" value="100" style="flex: 1; cursor: pointer; accent-color: #151413;">
+                    <span style="font-size: 10px; color: #78716c; font-weight: 600;">150%</span>
+                  </div>
                 </div>
-                <div style="display: flex; gap: 6px; align-items: center;">
-                  <button type="button" class="btn-outline" id="admin-offset-up" title="Nâng sản phẩm lên trên (khi hình tải lên bị thấp)" style="flex: 1; padding: 6px 8px; font-size: 11px; font-weight: 600; text-align: center;">
-                    ▲ Nâng Lên
-                  </button>
-                  <button type="button" class="btn-outline" id="admin-offset-down" title="Hạ sản phẩm xuống dưới" style="flex: 1; padding: 6px 8px; font-size: 11px; font-weight: 600; text-align: center;">
-                    ▼ Hạ Xuống
-                  </button>
-                  <button type="button" class="btn-outline" id="admin-offset-reset" title="Đặt lại vị trí 0%" style="padding: 6px 10px; font-size: 11px; color: #66625c;">
-                    Đặt Lại
-                  </button>
+
+                <div style="height: 1px; background: #e7e5e4;"></div>
+
+                <!-- 2. Vị Trí (Lên / Xuống) -->
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 11px; font-weight: 700; color: #151413; text-transform: uppercase; letter-spacing: 0.04em;">Vị Trí Lên / Xuống</span>
+                    <span id="admin-offset-val-badge" style="font-size: 11px; font-weight: 600; color: #151413; background: #e7e5e4; padding: 2px 7px; border-radius: 4px; font-variant-numeric: tabular-nums;">0% (Chuẩn)</span>
+                  </div>
+                  <div style="display: flex; gap: 6px; align-items: center;">
+                    <button type="button" class="btn-outline" id="admin-offset-up" title="Nâng sản phẩm lên trên (khi hình tải lên bị thấp)" style="flex: 1; padding: 6px 8px; font-size: 11px; font-weight: 600; text-align: center;">
+                      ▲ Nâng Lên
+                    </button>
+                    <button type="button" class="btn-outline" id="admin-offset-down" title="Hạ sản phẩm xuống dưới" style="flex: 1; padding: 6px 8px; font-size: 11px; font-weight: 600; text-align: center;">
+                      ▼ Hạ Xuống
+                    </button>
+                    <button type="button" class="btn-outline" id="admin-offset-reset" title="Đặt lại vị trí 0%" style="padding: 6px 10px; font-size: 11px; color: #66625c;">
+                      0%
+                    </button>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 10px; color: #78716c; font-weight: 600;">-30%</span>
+                    <input type="range" id="admin-offset-slider" min="-30" max="30" step="0.5" value="0" style="flex: 1; cursor: pointer; accent-color: #151413;">
+                    <span style="font-size: 10px; color: #78716c; font-weight: 600;">+30%</span>
+                  </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <span style="font-size: 10px; color: #78716c; font-weight: 600;">-30%</span>
-                  <input type="range" id="admin-offset-slider" min="-30" max="30" step="0.5" value="0" style="flex: 1; cursor: pointer; accent-color: #151413;">
-                  <span style="font-size: 10px; color: #78716c; font-weight: 600;">+30%</span>
-                </div>
+
                 <p style="margin: 0; font-size: 10px; color: #78716c; line-height: 1.35;">
-                  Bấm <strong>▲ Nâng Lên</strong> nếu ảnh bao bì tải lên bị thấp hoặc chìm sàn. Kích thước chuẩn bao bì được giữ nguyên.
+                  Tự do phóng to / thu nhỏ đồng đều tỷ lệ và chỉnh cao độ để sản phẩm hiển thị chuẩn xác nhất.
                 </p>
               </div>
 
@@ -1911,15 +1950,9 @@
       <!-- Admin Footer Actions -->
       <div class="dlg-foot" id="admin-editor-foot" hidden>
         <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-          <button type="button" class="btn-outline" id="admin-export-json">Xuất File JSON</button>
-          <label class="btn-outline" style="cursor: pointer; display: inline-flex; align-items: center;">
-            Nhập File JSON
-            <input type="file" id="admin-import-json" accept="application/json" hidden>
-          </label>
-          <button type="button" class="btn-outline" id="admin-reset-defaults">Khôi Phục Mặc Định Nhà Máy</button>
           <button type="button" class="btn-outline" id="admin-logout">Đăng Xuất</button>
         </div>
-        <button type="button" class="btn-primary" id="admin-save-apply">Lưu &amp; Áp Dụng Thay Đổi</button>
+        <button type="button" class="btn-primary" id="admin-save-apply">LƯU</button>
       </div>
     </div>
   </dialog>
