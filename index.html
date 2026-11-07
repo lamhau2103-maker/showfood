@@ -85,12 +85,12 @@
 
     /* 1.1 Site Header */
     .site-header {
-      min-height: 88px;
+      min-height: 96px;
       padding: 14px 40px;
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: 20px;
+      justify-content: center;
       border-bottom: 1px solid #e4e4e4;
       background: #fff;
       position: relative;
@@ -100,31 +100,39 @@
     .site-header .brand {
       display: inline-flex;
       align-items: center;
-      gap: 14px;
+      justify-content: center;
+      gap: 16px;
       flex-shrink: 0;
-      margin-right: auto;
+      margin: 0 auto;
+      text-decoration: none;
     }
 
     .site-header .brand img {
       display: block;
-      width: 48px;
-      height: 48px;
+      width: 58px;
+      height: 58px;
       object-fit: contain;
       border-radius: 8px;
       flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .site-header .brand:hover img {
+      transform: scale(1.03);
     }
 
     .brand-text-wrap {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
       justify-content: center;
+      text-align: left;
     }
 
     .site-header .brand-text {
-      font-size: 15px;
+      font-size: 18px;
       font-weight: 700;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.04em;
       color: #151413;
       text-transform: uppercase;
       line-height: 1.25;
@@ -132,9 +140,9 @@
     }
 
     .site-header .brand-subtext {
-      font-size: 10.5px;
+      font-size: 12px;
       font-weight: 600;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       color: #b91c1c;
       text-transform: uppercase;
       line-height: 1.25;
@@ -142,16 +150,19 @@
     }
 
     #open-admin {
-      margin-left: auto;
+      position: absolute;
+      right: 40px;
+      top: 50%;
+      transform: translateY(-50%);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 7px;
-      background: none;
+      background: #ffffff;
       border: 1px solid #e4e4e4;
-      padding: 8px 16px;
+      padding: 9px 18px;
       border-radius: 8px;
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 600;
       letter-spacing: 0.05em;
       text-transform: uppercase;
@@ -164,6 +175,7 @@
       border-color: #151413;
       background: #151413;
       color: #fff;
+      transform: translateY(-50%) scale(1.02);
     }
 
     /* 4.2 Runway Section & Derived Tokens */
@@ -1340,36 +1352,36 @@
 
     @media (max-width: 749px) {
       .site-header {
-        min-height: 66px;
+        min-height: 74px;
         padding: 10px 16px;
-        gap: 12px;
       }
       .site-header .brand {
-        gap: 10px;
+        gap: 12px;
+        margin: 0 auto;
+        max-width: calc(100% - 46px);
       }
       .site-header .brand img {
-        width: 38px;
-        height: 38px;
+        width: 44px;
+        height: 44px;
       }
       .site-header .brand-text {
-        font-size: 11px;
+        font-size: 13px;
         letter-spacing: 0.02em;
         white-space: normal;
         line-height: 1.25;
-        max-width: 230px;
       }
       .site-header .brand-subtext {
-        font-size: 8.5px;
+        font-size: 9.5px;
         letter-spacing: 0.02em;
         white-space: normal;
         line-height: 1.25;
-        max-width: 230px;
+      }
+      #open-admin {
+        right: 14px;
+        padding: 8px 10px;
       }
       #open-admin span {
         display: none;
-      }
-      #open-admin {
-        padding: 8px 10px;
       }
 
       runway-section.rw {
@@ -1474,7 +1486,7 @@
   <!-- 1. Site Header -->
   <header class="site-header shopify-section-group-header-group">
     <a href="./" class="brand" aria-label="CÔNG TY CỔ PHẦN THÁI VIỆT CORPORATION">
-      <img id="brand-logo-img" src="/assets/brand/thai-viet-logo.png" width="48" height="48" alt="Thái Việt Corporation Logo">
+      <img id="brand-logo-img" src="/assets/brand/thai-viet-logo.png" width="58" height="58" alt="Thái Việt Corporation Logo">
       <div class="brand-text-wrap">
         <span class="brand-text">CÔNG TY CỔ PHẦN THÁI VIỆT CORPORATION</span>
         <span class="brand-subtext">HỆ THỐNG THỨC ĂN CHĂN NUÔI CHUẨN CÔNG THỨC ĐẾN TỪ THÁI LAN</span>
