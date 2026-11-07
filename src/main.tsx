@@ -786,7 +786,6 @@ export class RunwaySection extends HTMLElement {
           return `
             <li class="rw__item" data-rw-card="${cardNum}" style="--i:${cardNum}" data-title="${escapeAttr(spec.title)}" data-catalog-id="${escapeAttr(spec.catalogId)}">
               <div class="rw__thumb">
-                <span class="rw__num">${cardNum}</span>
                 ${tagHtml}
                 <img src="${escapeAttr(spec.thumb)}" alt="${escapeAttr(spec.title)}" width="${spec.thumbW}" height="${spec.thumbH}" loading="lazy">
               </div>
