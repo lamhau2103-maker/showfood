@@ -356,36 +356,10 @@
       display: none !important;
     }
 
-    /* Numbered Specification Pins */
-    .rw__pin {
-      position: absolute;
-      width: 32px;
-      height: 32px;
-      margin-left: -16px;
-      margin-top: -16px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-      pointer-events: auto;
-      cursor: pointer;
-      opacity: 0;
-      transform-origin: 50% 100%;
-      transform: translate(
-        calc((var(--pin-x, 50) - 50) * (var(--rw-scale, 1) - 1) * 1%),
-        calc((var(--pin-y, 50) - 100) * (var(--rw-scale, 1) - 1) * 1% + var(--rw-foot, 0%) + var(--rw-offset-y, 0%))
-      ) scale(0.4);
-      transition: transform 0.45s var(--rw-ease-spring), opacity 0.35s var(--rw-ease);
-      transition-delay: calc(var(--rw-pin-base, 0.15s) + var(--pin-i, 0) * 0.07s);
-    }
-
+    /* Numbered Specification Pins - Hidden to avoid overlaying numbers 1, 2, 3 on product */
+    .rw__pin,
     .rw__lb.is-open .rw__pin {
-      opacity: 1;
-      transform: translate(
-        calc((var(--pin-x, 50) - 50) * (var(--rw-scale, 1) - 1) * 1%),
-        calc((var(--pin-y, 50) - 100) * (var(--rw-scale, 1) - 1) * 1% + var(--rw-foot, 0%) + var(--rw-offset-y, 0%))
-      ) scale(1);
+      display: none !important;
     }
 
     .rw__pin-dot {
@@ -945,25 +919,7 @@
     }
 
     .rw__tag {
-      position: absolute;
-      top: var(--rw-tag-top, 18px);
-      left: var(--rw-tag-left, 0px);
-      z-index: 3;
-      background: #151413;
-      color: #ffffff;
-      font-size: 9px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      border-radius: 4px;
-      padding: 3px 6px;
-      transform-origin: 0% 50%;
-      animation: rw-tag-swing 3.6s ease-in-out infinite;
-    }
-
-    @keyframes rw-tag-swing {
-      0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(-3deg); }
+      display: none !important;
     }
 
     .rw__info {

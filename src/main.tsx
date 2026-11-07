@@ -246,7 +246,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
         makeSpec('tatum-5-orbit', 50, 28, ''),
-        makeSpec('sweatshirt', 48, 58, 'Mới'),
+        makeSpec('sweatshirt', 48, 58, ''),
         makeSpec('hoodie-black', 45, 88, ''),
       ],
     },
@@ -263,7 +263,7 @@ export function getDefaultLooks(): FeedBagLook[] {
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
         makeSpec('tatum-5-orbit', 50, 28, ''),
-        makeSpec('sweatshirt-plus', 48, 58, 'Mới'),
+        makeSpec('sweatshirt-plus', 48, 58, ''),
         makeSpec('hoodie-black', 45, 88, ''),
       ],
     },
@@ -337,13 +337,19 @@ export function loadCmsData(): FeedBagLook[] {
         saveCmsData(def);
         return def;
       }
-      // Migrate old qualityStd if matching previous default
+      // Migrate old qualityStd if matching previous default & strip tag badges
       let migrated = false;
       parsed.forEach((look: FeedBagLook) => {
         if (look.qualityStd === 'TCVN 1547 · ISO 22000' || !look.qualityStd) {
           look.qualityStd = 'Đạt Chuẩn ISO 22000';
           migrated = true;
         }
+        look.specs?.forEach((sp) => {
+          if (sp.tag) {
+            sp.tag = '';
+            migrated = true;
+          }
+        });
       });
       if (migrated) {
         saveCmsData(parsed);
@@ -779,14 +785,10 @@ export class RunwaySection extends HTMLElement {
       const itemsHtml = look.specs
         .map((spec, sIdx) => {
           const cardNum = sIdx + 1;
-          const tagHtml = spec.tag
-            ? `<span class="rw__tag">${escapeHtml(spec.tag)}</span>`
-            : `<span class="rw__tag" hidden></span>`;
 
           return `
             <li class="rw__item" data-rw-card="${cardNum}" style="--i:${cardNum}" data-title="${escapeAttr(spec.title)}" data-catalog-id="${escapeAttr(spec.catalogId)}">
               <div class="rw__thumb">
-                ${tagHtml}
                 <img src="${escapeAttr(spec.thumb)}" alt="${escapeAttr(spec.title)}" width="${spec.thumbW}" height="${spec.thumbH}" loading="lazy">
               </div>
               <div class="rw__info">
@@ -1944,7 +1946,7 @@ class AdminCmsController {
         pieces: '3 chỉ tiêu',
         qualityStd: 'Đạt Chuẩn ISO 22000',
         specs: [
-          makeSpec('tatum-5-orbit-copy', 48, 28, 'Mới'),
+          makeSpec('tatum-5-orbit-copy', 48, 28, ''),
           makeSpec('tshirt', 48, 58, ''),
           makeSpec('hoodie', 45, 90, ''),
         ],
