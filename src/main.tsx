@@ -3,12 +3,15 @@
  * Pure Vanilla JS/TS Custom Element (<runway-section>) with 3D Ring Physics,
  * Alpha-Channel Foot Probe, FLIP Lightbox, Interactive Specification Rows & Live Admin CMS.
  *
- * Updated:
- * - Header: CÔNG TY CỔ PHẦN THÁI VIỆT CORPORATION + Brand Logo (Customizable via Admin)
- * - Navigation & Bag completely removed; Admin button aligned to far right
- * - Specification rows: 2-column layout without + button or pickers; clicking highlights corresponding pin
- * - Static Certification Footer: Cam Kết Đạt Chuẩn Công Thức Thái Lan / Đạt Chuẩn ISO 22000
+ * Integrated with Supabase (site_config table & product-images storage bucket)
  */
+
+import {
+  supabase,
+  fetchSiteConfigFromSupabase,
+  saveSiteConfigToSupabase,
+  SiteConfigPayload,
+} from './supabase';
 
 export interface SpecOption {
   label: string;
@@ -321,67 +324,65 @@ export function getDefaultLooks(): FeedBagLook[] {
   ];
 }
 
-export function loadCmsData(): FeedBagLook[] {
+export function getInitialFallbackConfig(): { brandLogo: string; looks: FeedBagLook[] } {
   try {
     const raw = localStorage.getItem(CMS_STORAGE_KEY);
-    if (!raw) return getDefaultLooks();
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length >= 1) {
-      // Auto-migrate if stored data is from the old English defaults
-      if (
-        parsed[0]?.name?.includes('Feed 414') ||
-        parsed[0]?.pieces?.includes('specs') ||
-        parsed[0]?.specs?.[0]?.title?.includes('Target:')
-      ) {
-        const def = getDefaultLooks();
-        saveCmsData(def);
-        return def;
+    const storedLogo = localStorage.getItem(BRAND_LOGO_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length >= 1) {
+        return {
+          brandLogo: storedLogo || DEFAULT_BRAND_LOGO,
+          looks: parsed,
+        };
       }
-      // Migrate old qualityStd if matching previous default & strip tag badges
-      let migrated = false;
-      parsed.forEach((look: FeedBagLook) => {
-        if (look.qualityStd === 'TCVN 1547 · ISO 22000' || !look.qualityStd) {
-          look.qualityStd = 'Đạt Chuẩn ISO 22000';
-          migrated = true;
-        }
-        look.specs?.forEach((sp) => {
-          if (sp.tag) {
-            sp.tag = '';
-            migrated = true;
-          }
-        });
-      });
-      if (migrated) {
-        saveCmsData(parsed);
-      }
-      return parsed;
     }
-  } catch {
-    // Fallback to factory defaults
-  }
-  return getDefaultLooks();
-}
-
-export function saveCmsData(looks: FeedBagLook[]): void {
-  localStorage.setItem(CMS_STORAGE_KEY, JSON.stringify(looks));
-}
-
-export function getBrandLogo(): string {
-  try {
-    return localStorage.getItem(BRAND_LOGO_KEY) || DEFAULT_BRAND_LOGO;
-  } catch {
-    return DEFAULT_BRAND_LOGO;
-  }
-}
-
-export function setBrandLogo(url: string): void {
-  try {
-    localStorage.setItem(BRAND_LOGO_KEY, url);
   } catch {
     // ignore
   }
+  return {
+    brandLogo: DEFAULT_BRAND_LOGO,
+    looks: getDefaultLooks(),
+  };
+}
+
+// In-memory active configuration (NO further writing to localStorage)
+const initialFallback = getInitialFallbackConfig();
+let activeLooks: FeedBagLook[] = initialFallback.looks;
+let activeBrandLogo: string = initialFallback.brandLogo;
+
+export function loadCmsData(): FeedBagLook[] {
+  return activeLooks;
+}
+
+export function getBrandLogo(): string {
+  return activeBrandLogo;
+}
+
+export function setBrandLogo(url: string): void {
+  activeBrandLogo = url;
   const logoEl = document.getElementById('brand-logo-img') as HTMLImageElement | null;
   if (logoEl) logoEl.src = url;
+}
+
+/**
+ * Reads site_config (id=1) from Supabase with cache: no-store and applies it to the active UI.
+ */
+export async function initAndSyncSupabaseConfig(): Promise<{ brandLogo: string; looks: FeedBagLook[] }> {
+  try {
+    const remote = await fetchSiteConfigFromSupabase();
+    if (remote && Array.isArray(remote.looks) && remote.looks.length > 0) {
+      activeBrandLogo = remote.brandLogo || DEFAULT_BRAND_LOGO;
+      activeLooks = remote.looks;
+      setBrandLogo(activeBrandLogo);
+      const rw = document.querySelector('runway-section') as RunwaySection | null;
+      rw?.applyCmsChanges(activeLooks);
+      return { brandLogo: activeBrandLogo, looks: activeLooks };
+    }
+  } catch (err) {
+    console.warn('Không thể nạp cấu hình từ Supabase:', err);
+  }
+  return { brandLogo: activeBrandLogo, looks: activeLooks };
 }
 
 /* Toast Notification Helper */
@@ -515,12 +516,16 @@ export class RunwaySection extends HTMLElement {
     this.walkLineEl = this.querySelector('.rw__walk-line');
 
     // Sync brand logo on load
-    const brandLogoUrl = getBrandLogo();
-    const logoImg = document.getElementById('brand-logo-img') as HTMLImageElement | null;
-    if (logoImg) logoImg.src = brandLogoUrl;
+    setBrandLogo(activeBrandLogo);
 
-    // Full dynamic hydration of stage bodies, heroes, ticks, and panels from CMS data
+    // Initial dynamic hydration of stage bodies, heroes, ticks, and panels from active configuration
+    this.looks = activeLooks;
     this.syncStageAndPanelsFromCms();
+
+    // Async sync with Supabase site_config (id=1) using cache: no-store
+    initAndSyncSupabaseConfig().catch((err) => {
+      console.warn('Lỗi đồng bộ site_config Supabase:', err);
+    });
 
     // Measure & observe
     this.measure();
@@ -1371,37 +1376,41 @@ class AdminCmsController {
     this.bindEvents();
   }
 
-  private isAuthenticated(): boolean {
-    return sessionStorage.getItem(ADMIN_AUTH_KEY) === '1';
+  private async checkSession(): Promise<boolean> {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      return !!session;
+    } catch {
+      return false;
+    }
   }
 
-  private logout(): void {
-    sessionStorage.removeItem(ADMIN_AUTH_KEY);
-    const userEl = document.getElementById('admin-user') as HTMLInputElement | null;
-    const passEl = document.getElementById('admin-pass') as HTMLInputElement | null;
-    if (userEl) userEl.value = '';
-    if (passEl) passEl.value = '';
-    if (this.loginErr) this.loginErr.hidden = true;
-    this.updateAuthView();
-  }
-
-  private openModal(): void {
-    this.workingLooks = JSON.parse(JSON.stringify(loadCmsData()));
-    this.currentBrandLogo = getBrandLogo();
-    this.updateAuthView();
+  private async openModal(): Promise<void> {
+    const isAuthed = await this.checkSession();
+    this.workingLooks = JSON.parse(JSON.stringify(activeLooks));
+    this.currentBrandLogo = activeBrandLogo;
+    if (isAuthed) {
+      this.showEditorView();
+    } else {
+      this.showLoginView();
+    }
     this.dialog?.showModal();
   }
 
-  private updateAuthView(): void {
-    const authed = this.isAuthenticated();
-    if (this.loginForm) this.loginForm.hidden = authed;
-    if (this.editorView) this.editorView.hidden = !authed;
-    if (this.editorFoot) this.editorFoot.hidden = !authed;
-    if (authed) {
-      this.renderBrandLogoFields();
-      this.renderSlotTabs();
-      this.renderSelectedSlotEditor();
-    }
+  private showEditorView(): void {
+    if (this.loginForm) this.loginForm.hidden = true;
+    if (this.editorView) this.editorView.hidden = false;
+    if (this.editorFoot) this.editorFoot.hidden = false;
+    this.renderBrandLogoFields();
+    this.renderSlotTabs();
+    this.renderSelectedSlotEditor();
+  }
+
+  private showLoginView(): void {
+    if (this.loginForm) this.loginForm.hidden = false;
+    if (this.editorView) this.editorView.hidden = true;
+    if (this.editorFoot) this.editorFoot.hidden = true;
+    if (this.loginErr) this.loginErr.hidden = true;
   }
 
   private renderBrandLogoFields(): void {
@@ -1895,37 +1904,58 @@ class AdminCmsController {
 
     this.dialog?.querySelectorAll('[data-admin-close]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        this.logout();
         this.dialog?.close();
       });
     });
 
     this.dialog?.addEventListener('click', (e) => {
       if (e.target === this.dialog) {
-        this.logout();
         this.dialog?.close();
       }
     });
 
-    this.dialog?.addEventListener('close', () => {
-      this.logout();
-    });
-
-    // Login Form Submit (ID: Admin / admin, Password: adminsale)
-    this.loginForm?.addEventListener('submit', (e) => {
+    // Supabase Auth Login Submit (Email + Password)
+    this.loginForm?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const userEl = document.getElementById('admin-user') as HTMLInputElement | null;
       const passEl = document.getElementById('admin-pass') as HTMLInputElement | null;
-      const uid = (userEl?.value.trim() || '').toLowerCase();
-      const pwd = passEl?.value || '';
+      const email = userEl?.value.trim() || '';
+      const password = passEl?.value || '';
 
-      if (uid === 'admin' && pwd === 'adminsale') {
-        sessionStorage.setItem(ADMIN_AUTH_KEY, '1');
-        if (this.loginErr) this.loginErr.hidden = true;
-        this.updateAuthView();
-        showToast('Đăng nhập thành công — Đã mở khóa quyền quản trị');
-      } else {
-        if (this.loginErr) this.loginErr.hidden = false;
+      const submitBtn = document.getElementById('admin-login-btn') as HTMLButtonElement | null;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Đang đăng nhập...';
+      }
+
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          if (this.loginErr) {
+            this.loginErr.textContent = `Đăng nhập không thành công: ${error.message}`;
+            this.loginErr.hidden = false;
+          }
+        } else if (data.session) {
+          if (this.loginErr) this.loginErr.hidden = true;
+          this.workingLooks = JSON.parse(JSON.stringify(activeLooks));
+          this.currentBrandLogo = activeBrandLogo;
+          this.showEditorView();
+          showToast('Đăng nhập Quản trị thành công');
+        }
+      } catch (err: any) {
+        if (this.loginErr) {
+          this.loginErr.textContent = err?.message || 'Lỗi kết nối xác thực Supabase';
+          this.loginErr.hidden = false;
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Đăng Nhập Quản Trị';
+        }
       }
     });
 
@@ -2120,23 +2150,59 @@ class AdminCmsController {
       applyScaleVal(100);
     });
 
-    // Save (LƯU)
-    document.getElementById('admin-save-apply')?.addEventListener('click', () => {
+    // Save (LƯU) -> Process base64 to Storage and upsert to site_config
+    const saveBtn = document.getElementById('admin-save-apply') as HTMLButtonElement | null;
+    saveBtn?.addEventListener('click', async () => {
       this.commitCurrentSlotInputs();
-      saveCmsData(this.workingLooks);
-      setBrandLogo(this.currentBrandLogo);
-      const rw = document.querySelector('runway-section') as RunwaySection | null;
-      rw?.applyCmsChanges(this.workingLooks);
-      this.logout();
-      this.dialog?.close();
-      showToast(`Đã lưu ${this.workingLooks.length} sản phẩm & cập nhật thương hiệu thành công`);
+
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'ĐANG LƯU...';
+      }
+
+      try {
+        showToast('Đang tải ảnh và lưu cấu hình lên Supabase...');
+
+        const payload: SiteConfigPayload = {
+          brandLogo: this.currentBrandLogo,
+          looks: this.workingLooks,
+        };
+
+        const saved = await saveSiteConfigToSupabase(payload);
+
+        // Update in-memory state and active UI
+        activeBrandLogo = saved.brandLogo;
+        activeLooks = saved.looks;
+        this.workingLooks = JSON.parse(JSON.stringify(saved.looks));
+        this.currentBrandLogo = saved.brandLogo;
+
+        setBrandLogo(this.currentBrandLogo);
+        const rw = document.querySelector('runway-section') as RunwaySection | null;
+        rw?.applyCmsChanges(this.workingLooks);
+
+        this.renderBrandLogoFields();
+        this.renderSlotTabs();
+        this.renderSelectedSlotEditor();
+
+        showToast(`Đã lưu ${this.workingLooks.length} sản phẩm lên Supabase thành công!`);
+        this.dialog?.close();
+      } catch (err: any) {
+        console.error('Lỗi khi lưu Supabase:', err);
+        showToast(err?.message || 'Lỗi lưu cấu hình lên Supabase. Vui lòng thử lại.');
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'LƯU';
+        }
+      }
     });
 
     // Logout (Đăng Xuất)
-    document.getElementById('admin-logout')?.addEventListener('click', () => {
-      this.logout();
+    document.getElementById('admin-logout')?.addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      this.showLoginView();
       this.dialog?.close();
-      showToast('Đã đăng xuất khỏi Quản Trị CMS');
+      showToast('Đã đăng xuất khỏi Quản Trị');
     });
   }
 }
