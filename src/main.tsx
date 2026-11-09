@@ -1459,27 +1459,18 @@ class AdminCmsController {
     this.bindEvents();
   }
 
-  private async checkSession(): Promise<boolean> {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      return !!session;
-    } catch {
-      return false;
-    }
-  }
-
   private async openModal(): Promise<void> {
     if (activeLooks.length === 0) {
       await initAndSyncSupabaseConfig();
     }
-    const isAuthed = await this.checkSession();
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // Ignore sign-out errors
+    }
     this.workingLooks = JSON.parse(JSON.stringify(activeLooks));
     this.currentBrandLogo = activeBrandLogo;
-    if (isAuthed) {
-      this.showEditorView();
-    } else {
-      this.showLoginView();
-    }
+    this.showLoginView();
     this.dialog?.showModal();
   }
 
@@ -1497,6 +1488,8 @@ class AdminCmsController {
     if (this.editorView) this.editorView.hidden = true;
     if (this.editorFoot) this.editorFoot.hidden = true;
     if (this.loginErr) this.loginErr.hidden = true;
+    const passEl = document.getElementById('admin-pass') as HTMLInputElement | null;
+    if (passEl) passEl.value = '';
   }
 
   private renderBrandLogoFields(): void {
@@ -2030,6 +2023,11 @@ class AdminCmsController {
       if (e.target === this.dialog) {
         this.dialog?.close();
       }
+    });
+
+    this.dialog?.addEventListener('close', () => {
+      supabase.auth.signOut().catch(() => {});
+      this.showLoginView();
     });
 
     // Supabase Auth Login Submit (Email + Password)

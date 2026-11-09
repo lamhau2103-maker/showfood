@@ -1366,6 +1366,21 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    /* Builder Credit at Bottom Corner */
+    .site-builder-credit {
+      position: fixed;
+      bottom: 8px;
+      right: 16px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: #8c877e;
+      opacity: 0.8;
+      z-index: 40;
+      pointer-events: none;
+      user-select: none;
+    }
+
     /* Responsive Breakpoints */
     @media (max-width: 1099px) {
       .rw__head {
@@ -2051,6 +2066,9 @@
       </div>
     </div>
   </dialog>
+
+  <!-- 4. Builder Credit -->
+  <div class="site-builder-credit">by Phuc Hau HR</div>
 
   <!-- 5. Toast Status -->
   <div id="bag-status" role="status" aria-live="polite"></div>

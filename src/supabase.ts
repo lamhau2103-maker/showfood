@@ -3,11 +3,29 @@ import { createClient } from '@supabase/supabase-js';
 export const SUPABASE_URL = 'https://filpclplomjgxiebleml.supabase.co';
 export const SUPABASE_ANON_KEY = 'sb_publishable_ZNjn_Amnklo0L4w3WdM4WA_qwXagNDb';
 
+// Clear any previously persisted Supabase Auth tokens so entering or reloading the web always requires fresh login
+try {
+  for (let i = localStorage.length - 1; i >= 0; i--) {
+    const k = localStorage.key(i);
+    if (k && (k.startsWith('sb-') || k.includes('supabase.auth.token'))) {
+      localStorage.removeItem(k);
+    }
+  }
+  for (let i = sessionStorage.length - 1; i >= 0; i--) {
+    const k = sessionStorage.key(i);
+    if (k && (k.startsWith('sb-') || k.includes('supabase.auth.token'))) {
+      sessionStorage.removeItem(k);
+    }
+  }
+} catch {
+  // Ignore storage access errors
+}
+
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
+    persistSession: false,
+    autoRefreshToken: false,
+    detectSessionInUrl: false,
   },
   global: {
     headers: {
