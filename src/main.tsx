@@ -50,8 +50,19 @@ export interface FeedBagLook {
 
 const CMS_STORAGE_KEY = 'runway-feed-cms-v1';
 const BRAND_LOGO_KEY = 'runway-brand-logo-v1';
-const ADMIN_AUTH_KEY = 'rw-admin-auth';
 const DEFAULT_BRAND_LOGO = '/assets/brand/thai-viet-logo.png';
+
+export const EMPTY_BAG_PLACEHOLDER =
+  'data:image/svg+xml;charset=UTF-8,' +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 1138" width="640" height="1138"><rect x="110" y="130" width="420" height="880" rx="28" fill="rgba(255,255,255,0.55)" stroke="rgba(21,20,19,0.18)" stroke-width="3" stroke-dasharray="12 8"/><circle cx="320" cy="510" r="38" fill="rgba(21,20,19,0.05)" stroke="rgba(21,20,19,0.2)" stroke-width="2"/><path d="M320 492v36M302 510h36" stroke="rgba(21,20,19,0.35)" stroke-width="2.5" stroke-linecap="round"/><text x="320" y="585" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="rgba(21,20,19,0.48)" letter-spacing="1.5">CHỜ CẬP NHẬT HÌNH ẢNH</text><text x="320" y="614" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="rgba(21,20,19,0.35)">Tải ảnh bao bì trong Quản trị</text></svg>`
+  );
+
+export const EMPTY_THUMB_PLACEHOLDER =
+  'data:image/svg+xml;charset=UTF-8,' +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400"><rect x="8" y="8" width="384" height="384" rx="20" fill="#f3f2ee" stroke="rgba(21,20,19,0.16)" stroke-width="2" stroke-dasharray="8 6"/><path d="M200 172v56M172 200h56" stroke="rgba(21,20,19,0.3)" stroke-width="3" stroke-linecap="round"/><text x="200" y="264" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="rgba(21,20,19,0.42)" letter-spacing="1">CHỜ ẢNH</text></svg>`
+  );
 
 const CATALOG_TEMPLATES: Record<string, Omit<BagSpecItem, 'tag' | 'pinLeft' | 'pinTop'>> = {
   'tatum-5-orbit-copy': {
@@ -205,11 +216,13 @@ function makeSpec(
   id: string,
   pinLeft: number,
   pinTop: number,
-  tag = ''
+  tag = '',
+  emptyThumb = false
 ): BagSpecItem {
   const base = CATALOG_TEMPLATES[id];
   return {
     ...base,
+    thumb: emptyThumb ? '' : base.thumb,
     options: base.options.map((o) => ({ ...o })),
     tag,
     pinLeft,
@@ -346,10 +359,10 @@ export function getInitialFallbackConfig(): { brandLogo: string; looks: FeedBagL
   };
 }
 
-// In-memory active configuration (NO further writing to localStorage)
-const initialFallback = getInitialFallbackConfig();
-let activeLooks: FeedBagLook[] = initialFallback.looks;
-let activeBrandLogo: string = initialFallback.brandLogo;
+// In-memory active configuration — DO NOT populate with fallback data before Supabase fetch completes!
+let activeLooks: FeedBagLook[] = [];
+let activeBrandLogo: string = DEFAULT_BRAND_LOGO;
+let initialLoadPromise: Promise<{ brandLogo: string; looks: FeedBagLook[] }> | null = null;
 
 export function loadCmsData(): FeedBagLook[] {
   return activeLooks;
@@ -360,29 +373,44 @@ export function getBrandLogo(): string {
 }
 
 export function setBrandLogo(url: string): void {
-  activeBrandLogo = url;
+  activeBrandLogo = url || DEFAULT_BRAND_LOGO;
   const logoEl = document.getElementById('brand-logo-img') as HTMLImageElement | null;
-  if (logoEl) logoEl.src = url;
+  if (logoEl) logoEl.src = activeBrandLogo;
 }
 
 /**
  * Reads site_config (id=1) from Supabase with cache: no-store and applies it to the active UI.
+ * Never renders fallback/localStorage data before the server fetch finishes.
  */
-export async function initAndSyncSupabaseConfig(): Promise<{ brandLogo: string; looks: FeedBagLook[] }> {
-  try {
-    const remote = await fetchSiteConfigFromSupabase();
-    if (remote && Array.isArray(remote.looks) && remote.looks.length > 0) {
-      activeBrandLogo = remote.brandLogo || DEFAULT_BRAND_LOGO;
-      activeLooks = remote.looks;
+export function initAndSyncSupabaseConfig(): Promise<{ brandLogo: string; looks: FeedBagLook[] }> {
+  if (initialLoadPromise) return initialLoadPromise;
+
+  initialLoadPromise = (async () => {
+    try {
+      const remote = await fetchSiteConfigFromSupabase();
+      if (remote && Array.isArray(remote.looks) && remote.looks.length > 0) {
+        activeBrandLogo = remote.brandLogo || DEFAULT_BRAND_LOGO;
+        activeLooks = remote.looks;
+      } else {
+        // Only if server table site_config is empty after fetch completes, use migration fallback
+        const fallback = getInitialFallbackConfig();
+        activeBrandLogo = fallback.brandLogo;
+        activeLooks = fallback.looks;
+      }
+    } catch (err) {
+      console.warn('Không thể nạp cấu hình từ Supabase:', err);
+      const fallback = getInitialFallbackConfig();
+      activeBrandLogo = fallback.brandLogo;
+      activeLooks = fallback.looks;
+    } finally {
       setBrandLogo(activeBrandLogo);
       const rw = document.querySelector('runway-section') as RunwaySection | null;
-      rw?.applyCmsChanges(activeLooks);
-      return { brandLogo: activeBrandLogo, looks: activeLooks };
+      rw?.setLoadedData(activeLooks);
     }
-  } catch (err) {
-    console.warn('Không thể nạp cấu hình từ Supabase:', err);
-  }
-  return { brandLogo: activeBrandLogo, looks: activeLooks };
+    return { brandLogo: activeBrandLogo, looks: activeLooks };
+  })();
+
+  return initialLoadPromise;
 }
 
 /* Toast Notification Helper */
@@ -421,6 +449,7 @@ function wrapSym(d: number, period: number): number {
 
 /* Custom Element <runway-section> */
 export class RunwaySection extends HTMLElement {
+  public isLoading = true;
   private looks: FeedBagLook[] = [];
   private actorsWrap!: HTMLElement;
   private heroesWrap!: HTMLElement;
@@ -495,9 +524,9 @@ export class RunwaySection extends HTMLElement {
   private lastFrameTime = performance.now();
 
   connectedCallback(): void {
-    this.looks = loadCmsData();
-    this.N = Math.max(1, this.looks.length);
-    this.M = this.N * 2;
+    this.isLoading = true;
+    this.classList.add('is-loading');
+
     this.speedMs = Number(this.dataset.speed) || 5000;
     this.autoplayEnabled = this.dataset.autoplay !== 'false';
 
@@ -515,19 +544,7 @@ export class RunwaySection extends HTMLElement {
     this.lbTitleEl = this.querySelector('[data-rw-lb-title]');
     this.walkLineEl = this.querySelector('.rw__walk-line');
 
-    // Sync brand logo on load
-    setBrandLogo(activeBrandLogo);
-
-    // Initial dynamic hydration of stage bodies, heroes, ticks, and panels from active configuration
-    this.looks = activeLooks;
-    this.syncStageAndPanelsFromCms();
-
-    // Async sync with Supabase site_config (id=1) using cache: no-store
-    initAndSyncSupabaseConfig().catch((err) => {
-      console.warn('Lỗi đồng bộ site_config Supabase:', err);
-    });
-
-    // Measure & observe
+    // Measure & observe while Skeleton Loading is displayed
     this.measure();
     window.addEventListener('resize', () => this.measure());
 
@@ -545,7 +562,11 @@ export class RunwaySection extends HTMLElement {
     io.observe(this);
 
     this.bindInteractions();
-    this.setIndex(0, false);
+
+    // Fetch latest data from Supabase (cache: no-store) before rendering any product images
+    initAndSyncSupabaseConfig().catch((err) => {
+      console.warn('Lỗi đồng bộ site_config Supabase:', err);
+    });
 
     this.lastFrameTime = performance.now();
     const loop = (now: number) => {
@@ -562,10 +583,23 @@ export class RunwaySection extends HTMLElement {
   }
 
   /**
+   * Called once Supabase fetch finishes to exit Skeleton Loading and render products
+   */
+  public setLoadedData(newLooks: FeedBagLook[]): void {
+    this.isLoading = false;
+    this.classList.remove('is-loading');
+    this.applyCmsChanges(newLooks);
+    this.measure();
+  }
+
+  /**
    * Public method called by Admin CMS on live save or reset
    */
   public applyCmsChanges(newLooks?: FeedBagLook[]): void {
     this.looks = newLooks ? newLooks : loadCmsData();
+    if (this.looks.length === 0) return;
+    this.isLoading = false;
+    this.classList.remove('is-loading');
     this.N = Math.max(1, this.looks.length);
     this.M = this.N * 2;
     this.activeIndex = clamp(this.activeIndex, 0, this.N - 1);
@@ -575,6 +609,7 @@ export class RunwaySection extends HTMLElement {
   }
 
   private syncStageAndPanelsFromCms(): void {
+    if (this.looks.length === 0) return;
     this.N = Math.max(1, this.looks.length);
     this.M = this.N * 2;
 
@@ -583,6 +618,8 @@ export class RunwaySection extends HTMLElement {
       this.actorsWrap.innerHTML = '';
       this.looks.forEach((look, i) => {
         const isFront = i === this.activeIndex;
+        const imgSrc640 = look.img640 || EMPTY_BAG_PLACEHOLDER;
+        const imgSrc1080 = look.img1080 || look.img640 || EMPTY_BAG_PLACEHOLDER;
         const model = document.createElement('div');
         model.className = `rw__model${isFront ? ' is-front' : ''}`;
         model.dataset.rwModel = '';
@@ -594,7 +631,7 @@ export class RunwaySection extends HTMLElement {
         model.innerHTML = `
           <div class="rw__model-inner">
             <span class="rw__ground" aria-hidden="true"></span>
-            <img src="${escapeAttr(look.img640)}" srcset="${escapeAttr(look.img640)} 640w, ${escapeAttr(look.img1080 || look.img640)} 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="${i < 2 ? 'eager' : 'lazy'}" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="${escapeAttr(look.name)}">
+            <img src="${escapeAttr(imgSrc640)}" srcset="${escapeAttr(imgSrc640)} 640w, ${escapeAttr(imgSrc1080)} 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="${i < 2 ? 'eager' : 'lazy'}" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="${escapeAttr(look.name)}">
           </div>
         `;
         this.actorsWrap.appendChild(model);
@@ -603,6 +640,8 @@ export class RunwaySection extends HTMLElement {
       });
 
       this.looks.forEach((look, i) => {
+        const imgSrc640 = look.img640 || EMPTY_BAG_PLACEHOLDER;
+        const imgSrc1080 = look.img1080 || look.img640 || EMPTY_BAG_PLACEHOLDER;
         const clone = document.createElement('div');
         clone.className = 'rw__model';
         clone.dataset.rwModel = '';
@@ -616,7 +655,7 @@ export class RunwaySection extends HTMLElement {
         clone.innerHTML = `
           <div class="rw__model-inner">
             <span class="rw__ground" aria-hidden="true"></span>
-            <img src="${escapeAttr(look.img640)}" srcset="${escapeAttr(look.img640)} 640w, ${escapeAttr(look.img1080 || look.img640)} 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="lazy" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="${escapeAttr(look.name)}">
+            <img src="${escapeAttr(imgSrc640)}" srcset="${escapeAttr(imgSrc640)} 640w, ${escapeAttr(imgSrc1080)} 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="lazy" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="${escapeAttr(look.name)}">
           </div>
         `;
         this.actorsWrap.appendChild(clone);
@@ -631,12 +670,14 @@ export class RunwaySection extends HTMLElement {
     if (this.heroesWrap) {
       this.heroesWrap.innerHTML = '';
       this.looks.forEach((look, i) => {
+        const imgSrc640 = look.img640 || EMPTY_BAG_PLACEHOLDER;
+        const imgSrc1080 = look.img1080 || look.img640 || EMPTY_BAG_PLACEHOLDER;
         const hero = document.createElement('div');
         hero.className = `rw__hero${i === this.activeIndex ? ' is-active' : ''}`;
         hero.dataset.rwHero = '';
         hero.dataset.index = String(i);
         hero.dataset.name = look.name;
-        hero.dataset.probe = look.img640;
+        hero.dataset.probe = look.img640 || '';
         hero.style.setProperty('--rw-ar', '0.5625');
         hero.style.setProperty('--rw-offset-y', `${look.offsetY ?? 0}%`);
         hero.style.setProperty('--rw-scale', `${look.scale ?? 1}`);
@@ -651,7 +692,7 @@ export class RunwaySection extends HTMLElement {
         hero.innerHTML = `
           <figure class="rw__figure" data-rw-figure style="--rw-offset-y:${look.offsetY ?? 0}%;--rw-scale:${look.scale ?? 1}">
             <span class="rw__ground" aria-hidden="true"></span>
-            <img src="${escapeAttr(look.img640)}" srcset="${escapeAttr(look.img640)} 640w, ${escapeAttr(look.img1080 || look.img640)} 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="${escapeAttr(look.name)}">
+            <img src="${escapeAttr(imgSrc640)}" srcset="${escapeAttr(imgSrc640)} 640w, ${escapeAttr(imgSrc1080)} 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="${escapeAttr(look.name)}">
             ${pinsHtml}
           </figure>
         `;
@@ -732,6 +773,21 @@ export class RunwaySection extends HTMLElement {
    * Section 14: Canvas Alpha-Channel Bottom-Edge ("Feet/Base") Probe
    */
   private probeFoot(index: number, url: string): void {
+    const origBody = this.bodies[index];
+    const cloneBody = this.bodies[index + this.N];
+    const hero = this.heroes[index];
+    const offY = `${this.looks[index]?.offsetY ?? 0}%`;
+    const scaleVal = `${this.looks[index]?.scale ?? 1}`;
+
+    if (!url) {
+      [origBody, cloneBody, hero].forEach((el) => {
+        el?.style.setProperty('--rw-foot', '0%');
+        el?.style.setProperty('--rw-offset-y', offY);
+        el?.style.setProperty('--rw-scale', scaleVal);
+      });
+      return;
+    }
+
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
@@ -757,11 +813,6 @@ export class RunwaySection extends HTMLElement {
         }
         const emptyFraction = clamp((h - 1 - bottomRow) / h, 0, 0.25);
         const footPct = `${(emptyFraction * 100).toFixed(2)}%`;
-        const origBody = this.bodies[index];
-        const cloneBody = this.bodies[index + this.N];
-        const hero = this.heroes[index];
-        const offY = `${this.looks[index]?.offsetY ?? 0}%`;
-        const scaleVal = `${this.looks[index]?.scale ?? 1}`;
         [origBody, cloneBody, hero].forEach((el) => {
           el?.style.setProperty('--rw-foot', footPct);
           el?.style.setProperty('--rw-offset-y', offY);
@@ -790,11 +841,12 @@ export class RunwaySection extends HTMLElement {
       const itemsHtml = look.specs
         .map((spec, sIdx) => {
           const cardNum = sIdx + 1;
+          const thumbSrc = spec.thumb || EMPTY_THUMB_PLACEHOLDER;
 
           return `
             <li class="rw__item" data-rw-card="${cardNum}" style="--i:${cardNum}" data-title="${escapeAttr(spec.title)}" data-catalog-id="${escapeAttr(spec.catalogId)}">
               <div class="rw__thumb">
-                <img src="${escapeAttr(spec.thumb)}" alt="${escapeAttr(spec.title)}" width="${spec.thumbW}" height="${spec.thumbH}" loading="lazy">
+                <img src="${escapeAttr(thumbSrc)}" alt="${escapeAttr(spec.title)}" width="${spec.thumbW}" height="${spec.thumbH}" loading="lazy">
               </div>
               <div class="rw__info">
                 <span class="rw__type">${escapeHtml(spec.type)}</span>
@@ -971,7 +1023,7 @@ export class RunwaySection extends HTMLElement {
    * Section 11: FLIP Lightbox ("View bag" Popup with Numbered Specification Pins)
    */
   public openLightbox(): void {
-    if (this.isLightboxOpen || !this.lbEl || !this.lbStageEl) return;
+    if (this.isLoading || this.isLightboxOpen || !this.lbEl || !this.lbStageEl) return;
     const hero = this.heroes[this.activeIndex];
     const fig = hero?.querySelector<HTMLElement>('[data-rw-figure]');
     if (!hero || !fig) return;
@@ -1034,6 +1086,15 @@ export class RunwaySection extends HTMLElement {
    * Section 7: 3D Ring & Classic Queue Physics Loop
    */
   private stepPhysics(dt: number): void {
+    // Custom cursor lerp (0.18)
+    if (this.cursorEl && this.curVisible) {
+      this.curX += (this.curTx - this.curX) * 0.18;
+      this.curY += (this.curTy - this.curY) * 0.18;
+      this.cursorEl.style.transform = `translate3d(${this.curX.toFixed(1)}px, ${this.curY.toFixed(1)}px, 0)`;
+    }
+
+    if (this.isLoading || this.looks.length === 0) return;
+
     // 1. Autoplay progress
     const canAuto =
       this.autoplayEnabled &&
@@ -1051,13 +1112,6 @@ export class RunwaySection extends HTMLElement {
       }
       const activeTick = this.ticks[this.activeIndex];
       activeTick?.style.setProperty('--rw-tick-p', clamp(this.autoProgress, 0, 1).toFixed(3));
-    }
-
-    // 2. Custom cursor lerp (0.18)
-    if (this.cursorEl && this.curVisible) {
-      this.curX += (this.curTx - this.curX) * 0.18;
-      this.curY += (this.curTy - this.curY) * 0.18;
-      this.cursorEl.style.transform = `translate3d(${this.curX.toFixed(1)}px, ${this.curY.toFixed(1)}px, 0)`;
     }
 
     // 3. Spring integration for each of the 12 bodies
@@ -1386,6 +1440,9 @@ class AdminCmsController {
   }
 
   private async openModal(): Promise<void> {
+    if (activeLooks.length === 0) {
+      await initAndSyncSupabaseConfig();
+    }
     const isAuthed = await this.checkSession();
     this.workingLooks = JSON.parse(JSON.stringify(activeLooks));
     this.currentBrandLogo = activeBrandLogo;
@@ -1465,8 +1522,8 @@ class AdminCmsController {
 
     if (nameInput) nameInput.value = look.name;
     if (stdInput) stdInput.value = look.qualityStd;
-    if (img640Input) img640Input.value = look.img640;
-    if (img1080Input) img1080Input.value = look.img1080;
+    if (img640Input) img640Input.value = look.img640 || '';
+    if (img1080Input) img1080Input.value = look.img1080 || '';
 
     const offsetY = look.offsetY ?? 0;
     const offsetSlider = document.getElementById('admin-offset-slider') as HTMLInputElement | null;
@@ -1498,7 +1555,7 @@ class AdminCmsController {
     }
 
     if (previewImg) {
-      previewImg.src = look.img640;
+      previewImg.src = look.img640 || EMPTY_BAG_PLACEHOLDER;
       previewImg.style.setProperty('--admin-preview-offset-y', `${offsetY}%`);
       previewImg.style.setProperty('--admin-preview-scale', `${scale}`);
       previewImg.style.transform = `translateY(${offsetY}%) scale(${scale})`;
@@ -1514,6 +1571,7 @@ class AdminCmsController {
     ];
 
     look.specs.forEach((spec, sIdx) => {
+      const thumbPreviewSrc = spec.thumb || EMPTY_THUMB_PLACEHOLDER;
       const card = document.createElement('div');
       card.className = 'admin-spec-card';
       card.innerHTML = `
@@ -1533,8 +1591,8 @@ class AdminCmsController {
         <div class="admin-field">
           <label>Đường dẫn ảnh thu nhỏ (URL / DataURL)</label>
           <div style="display:flex;gap:6px;align-items:center;">
-            <img src="${escapeAttr(spec.thumb)}" alt="Thu nhỏ" data-spec-thumb-preview="${sIdx}" style="width:36px;height:36px;object-fit:cover;border:1px solid #c8c8c8;border-radius:6px;flex-shrink:0;">
-            <input type="text" data-spec-field="thumb" data-spec-idx="${sIdx}" value="${escapeAttr(spec.thumb)}" style="flex:1;min-width:0;">
+            <img src="${escapeAttr(thumbPreviewSrc)}" alt="Thu nhỏ" data-spec-thumb-preview="${sIdx}" style="width:36px;height:36px;object-fit:cover;border:1px solid #c8c8c8;border-radius:6px;flex-shrink:0;">
+            <input type="text" data-spec-field="thumb" data-spec-idx="${sIdx}" value="${escapeAttr(spec.thumb || '')}" placeholder="Chờ cập nhật hình ảnh..." style="flex:1;min-width:0;">
           </div>
           <label class="btn-outline" style="margin-top:4px;text-align:center;cursor:pointer;font-size:11px;padding:6px 12px;">
             Tải Lên Ảnh Thu Nhỏ
@@ -1553,16 +1611,23 @@ class AdminCmsController {
         </div>
       `;
 
+      // Bind live input update on thumb URL field
+      const thumbInputEl = card.querySelector<HTMLInputElement>(`[data-spec-field="thumb"][data-spec-idx="${sIdx}"]`);
+      const thumbPrevEl = card.querySelector<HTMLImageElement>(`[data-spec-thumb-preview="${sIdx}"]`);
+      thumbInputEl?.addEventListener('input', () => {
+        const val = thumbInputEl.value.trim();
+        if (thumbPrevEl) thumbPrevEl.src = val || EMPTY_THUMB_PLACEHOLDER;
+        look.specs[sIdx].thumb = val;
+      });
+
       // Bind thumbnail file upload
       const fileInput = card.querySelector<HTMLInputElement>(`[data-spec-file="${sIdx}"]`);
       fileInput?.addEventListener('change', () => {
         const file = fileInput.files?.[0];
         if (!file) return;
         this.readImageFileAsDataUrl(file, 400, (dataUrl) => {
-          const thumbInput = card.querySelector<HTMLInputElement>(`[data-spec-field="thumb"][data-spec-idx="${sIdx}"]`);
-          const thumbPrev = card.querySelector<HTMLImageElement>(`[data-spec-thumb-preview="${sIdx}"]`);
-          if (thumbInput) thumbInput.value = dataUrl;
-          if (thumbPrev) thumbPrev.src = dataUrl;
+          if (thumbInputEl) thumbInputEl.value = dataUrl;
+          if (thumbPrevEl) thumbPrevEl.src = dataUrl;
           look.specs[sIdx].thumb = dataUrl;
         });
       });
@@ -1587,7 +1652,7 @@ class AdminCmsController {
 
     if (nameInput && nameInput.value.trim()) look.name = nameInput.value.trim();
     if (stdInput && stdInput.value.trim()) look.qualityStd = stdInput.value.trim();
-    if (img640Input && img640Input.value.trim()) look.img640 = img640Input.value.trim();
+    if (img640Input) look.img640 = img640Input.value.trim();
     if (img1080Input && img1080Input.value.trim()) {
       look.img1080 = img1080Input.value.trim();
     } else {
@@ -1959,7 +2024,7 @@ class AdminCmsController {
       }
     });
 
-    // Add new product button (+ Thêm Sản Phẩm Mới)
+    // Add new product button (+ Thêm Sản Phẩm Mới) -> Default to EMPTY image waiting for update
     document.getElementById('admin-add-product')?.addEventListener('click', () => {
       this.commitCurrentSlotInputs();
       const newIdx = this.workingLooks.length;
@@ -1969,23 +2034,23 @@ class AdminCmsController {
         key: 'look_' + Math.random().toString(36).substring(2, 8),
         code: nextCode,
         name: `Cám ${nextCode} — Dòng Chăn Nuôi Mới`,
-        img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp',
-        img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp',
+        img640: '',
+        img1080: '',
         offsetY: 0,
         scale: 1,
         pieces: '3 chỉ tiêu',
         qualityStd: 'Đạt Chuẩn ISO 22000',
         specs: [
-          makeSpec('tatum-5-orbit-copy', 48, 28, ''),
-          makeSpec('tshirt', 48, 58, ''),
-          makeSpec('hoodie', 45, 90, ''),
+          makeSpec('tatum-5-orbit-copy', 48, 28, '', true),
+          makeSpec('tshirt', 48, 58, '', true),
+          makeSpec('hoodie', 45, 90, '', true),
         ],
       };
       this.workingLooks.push(newLook);
       this.selectedSlot = this.workingLooks.length - 1;
       this.renderSlotTabs();
       this.renderSelectedSlotEditor();
-      showToast(`Đã thêm sản phẩm #${newIdx + 1} — hãy tùy chỉnh và bấm LƯU`);
+      showToast(`Đã thêm sản phẩm #${newIdx + 1} (chờ cập nhật hình ảnh)`);
     });
 
     // Delete current product button (Xóa Sản Phẩm Này)
@@ -2034,8 +2099,8 @@ class AdminCmsController {
     const img640Input = document.getElementById('admin-bag-img-640') as HTMLInputElement | null;
     img640Input?.addEventListener('input', () => {
       const previewImg = document.getElementById('admin-bag-preview-img') as HTMLImageElement | null;
-      if (previewImg && img640Input.value.trim()) {
-        previewImg.src = img640Input.value.trim();
+      if (previewImg) {
+        previewImg.src = img640Input.value.trim() || EMPTY_BAG_PLACEHOLDER;
       }
     });
 

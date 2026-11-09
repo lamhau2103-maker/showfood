@@ -10,6 +10,11 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     detectSessionInUrl: true,
   },
   global: {
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
+    },
     fetch: (url, options = {}) => {
       return fetch(url, {
         ...options,
@@ -22,6 +27,64 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 export interface SiteConfigPayload {
   brandLogo: string;
   looks: any[];
+  updatedAt?: number | string;
+}
+
+/**
+ * Appends or updates `?v=${version}` on HTTP/HTTPS or relative asset URLs for cache-busting.
+ * Leaves empty strings and data:/blob: URLs untouched.
+ */
+export function appendCacheVersion(url: string, version: string | number): string {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (!trimmed || trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
+    return trimmed;
+  }
+  const cleanVer = encodeURIComponent(String(version));
+  // Strip any existing v= query parameter
+  const [basePart, queryPart] = trimmed.split('?');
+  if (!queryPart) {
+    return `${basePart}?v=${cleanVer}`;
+  }
+  const params = queryPart
+    .split('&')
+    .filter((p) => p && !p.startsWith('v='));
+  params.push(`v=${cleanVer}`);
+  return `${basePart}?${params.join('&')}`;
+}
+
+/**
+ * Applies cache-busting `?v=${version}` to all image URLs in SiteConfigPayload.
+ */
+export function applyCacheBustingToPayload(
+  payload: SiteConfigPayload,
+  version: string | number
+): SiteConfigPayload {
+  const cloned: SiteConfigPayload = JSON.parse(JSON.stringify(payload));
+  cloned.updatedAt = version;
+  if (cloned.brandLogo) {
+    cloned.brandLogo = appendCacheVersion(cloned.brandLogo, version);
+  }
+  if (Array.isArray(cloned.looks)) {
+    cloned.looks.forEach((look) => {
+      if (look && typeof look === 'object') {
+        if (typeof look.img640 === 'string' && look.img640) {
+          look.img640 = appendCacheVersion(look.img640, version);
+        }
+        if (typeof look.img1080 === 'string' && look.img1080) {
+          look.img1080 = appendCacheVersion(look.img1080, version);
+        }
+        if (Array.isArray(look.specs)) {
+          look.specs.forEach((sp: any) => {
+            if (sp && typeof sp.thumb === 'string' && sp.thumb) {
+              sp.thumb = appendCacheVersion(sp.thumb, version);
+            }
+          });
+        }
+      }
+    });
+  }
+  return cloned;
 }
 
 /**
@@ -115,7 +178,7 @@ export async function processAndUploadDataUrls<T>(target: T): Promise<T> {
 }
 
 /**
- * Reads site_config (id=1) from Supabase with cache: no-store.
+ * Reads site_config (id=1) from Supabase with cache: no-store and applies cache-busting ?v=${updatedAt}.
  */
 export async function fetchSiteConfigFromSupabase(): Promise<SiteConfigPayload | null> {
   try {
@@ -131,7 +194,11 @@ export async function fetchSiteConfigFromSupabase(): Promise<SiteConfigPayload |
     }
 
     if (data && data.data && typeof data.data === 'object' && Array.isArray(data.data.looks)) {
-      return data.data as SiteConfigPayload;
+      const rawPayload = data.data as SiteConfigPayload;
+      const versionTs = data.updated_at
+        ? new Date(data.updated_at).getTime() || Date.now()
+        : rawPayload.updatedAt || Date.now();
+      return applyCacheBustingToPayload(rawPayload, versionTs);
     }
 
     return null;
@@ -142,23 +209,28 @@ export async function fetchSiteConfigFromSupabase(): Promise<SiteConfigPayload |
 }
 
 /**
- * Processes all base64 images into public Storage URLs, then upserts the configuration to site_config (id=1).
+ * Processes all base64 images into public Storage URLs, attaches cache-busting ?v=${updatedAt},
+ * and upserts the configuration to site_config (id=1).
  */
 export async function saveSiteConfigToSupabase(
   payload: SiteConfigPayload
 ): Promise<SiteConfigPayload> {
   // 1. Upload any base64 images and replace them with public URLs
-  const sanitizedPayload = await processAndUploadDataUrls(payload);
+  const uploadedPayload = await processAndUploadDataUrls(payload);
 
-  // 2. Upsert into site_config (id=1)
-  const now = new Date().toISOString();
+  // 2. Apply cache-busting timestamp (?v=${updatedAt}) to all image URLs
+  const nowIso = new Date().toISOString();
+  const versionTs = new Date(nowIso).getTime();
+  const versionedPayload = applyCacheBustingToPayload(uploadedPayload, versionTs);
+
+  // 3. Upsert into site_config (id=1)
   const { error } = await supabase
     .from('site_config')
     .upsert(
       {
         id: 1,
-        data: sanitizedPayload,
-        updated_at: now,
+        data: versionedPayload,
+        updated_at: nowIso,
       },
       { onConflict: 'id' }
     );
@@ -167,5 +239,5 @@ export async function saveSiteConfigToSupabase(
     throw new Error(`Lỗi cập nhật bảng site_config: ${error.message}`);
   }
 
-  return sanitizedPayload;
+  return versionedPayload;
 }

@@ -13,7 +13,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" fetchpriority="high">
   <style>
     :root {
       color-scheme: light;
@@ -1473,6 +1472,174 @@
       }
     }
 
+    /* Skeleton Loading System (Thái Việt Corporation Luxury Shimmer) */
+    @keyframes rw-shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    @keyframes rw-pulse-soft {
+      0%, 100% {
+        opacity: 0.92;
+      }
+      50% {
+        opacity: 0.65;
+      }
+    }
+
+    .rw-shimmer-box {
+      background: linear-gradient(90deg, #f3f2ef 0%, #e7e5e0 48%, #f8f7f5 62%, #f3f2ef 100%);
+      background-size: 220% 100%;
+      animation: rw-shimmer 1.75s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      border-radius: 8px;
+    }
+
+    runway-section:not(.is-loading) [data-rw-skeleton-stage],
+    runway-section:not(.is-loading) [data-rw-skeleton-ticks],
+    runway-section:not(.is-loading) [data-rw-skeleton-panel] {
+      display: none !important;
+    }
+
+    runway-section.is-loading .rw__actors,
+    runway-section.is-loading .rw__heroes,
+    runway-section.is-loading .rw__ticks,
+    runway-section.is-loading .rw__panels,
+    runway-section.is-loading .rw__cursor {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    runway-section.is-loading .rw__ticks {
+      display: none !important;
+    }
+
+    .rw__skeleton-stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 42px;
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    .rw__skeleton-ring {
+      position: relative;
+      width: 100%;
+      max-width: 760px;
+      height: min(500px, 64vh);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .rw__skeleton-bag {
+      border-radius: 18px;
+      border: 1px solid rgba(21, 20, 19, 0.07);
+      box-shadow: 0 22px 48px rgba(21, 20, 19, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rw__skeleton-bag--main {
+      width: min(260px, 46vw);
+      height: min(420px, 54vh);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 24px;
+      background: linear-gradient(110deg, #f5f4f0 8%, #eae7e1 38%, #f8f7f5 58%, #f5f4f0 90%);
+      background-size: 220% 100%;
+      animation: rw-shimmer 1.75s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    .rw__skeleton-bag--side-l,
+    .rw__skeleton-bag--side-r {
+      position: absolute;
+      bottom: 36px;
+      width: min(190px, 32vw);
+      height: min(310px, 40vh);
+      opacity: 0.55;
+      filter: blur(1px);
+      z-index: 1;
+    }
+
+    .rw__skeleton-bag--side-l {
+      left: 12%;
+      transform: translateX(-10%) scale(0.9);
+    }
+
+    .rw__skeleton-bag--side-r {
+      right: 12%;
+      transform: translateX(10%) scale(0.9);
+    }
+
+    .rw__skeleton-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(21, 20, 19, 0.08);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #66625c;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      animation: rw-pulse-soft 2s ease-in-out infinite;
+    }
+
+    .rw__skeleton-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #b91c1c;
+    }
+
+    .rw__skeleton-ticks {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      overflow: hidden;
+      padding: 4px 2px;
+    }
+
+    .rw__skeleton-tick {
+      flex: 1 1 0;
+      min-width: 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .rw__skeleton-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding-top: 8px;
+    }
+
+    .rw__skeleton-row {
+      display: grid;
+      grid-template-columns: var(--rw-thumb, 92px) minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #eceae6;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -1505,7 +1672,7 @@
   <main>
     <runway-section
       id="Runway-template--28035983671601__the_runway_wdM8BG"
-      class="rw rw--add-icon rw--popup rw--list has-dividers has-border"
+      class="rw rw--add-icon rw--popup rw--list has-dividers has-border is-loading"
       data-feel="balanced"
       data-blur="true"
       data-mblur="true"
@@ -1531,113 +1698,32 @@
           <!-- Left Column: Stage & Controls -->
           <div class="rw__left">
             <div class="rw__head">
-              <span class="rw__sr" aria-live="polite" aria-atomic="true" data-rw-live>Bao cám 1: Cám 414 — Heo Choai (15–30kg)</span>
+              <span class="rw__sr" aria-live="polite" aria-atomic="true" data-rw-live>Đang tải danh mục sản phẩm...</span>
             </div>
 
             <div class="rw__stage" data-rw-stage tabindex="0" role="region" aria-roledescription="carousel" aria-label="Dinh Dưỡng Đàn Nuôi — Sử dụng phím mũi tên hoặc kéo chuột/vuốt tay để chuyển đổi bao cám">
-              <!-- Queue Bodies (6 originals; 6 clones appended by script) -->
-              <div class="rw__actors" data-rw-actors>
-                <div class="rw__model is-front" data-rw-model data-index="0" data-look-key="bndthK" style="--rw-ar:0.5625">
-                  <div class="rw__model-inner">
-                    <span class="rw__ground" aria-hidden="true"></span>
-                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 414 — Heo Choai (15–30kg)">
+              <!-- Skeleton Loading Stage (Shown while isLoading === true) -->
+              <div class="rw__skeleton-stage" data-rw-skeleton-stage aria-hidden="true">
+                <div class="rw__skeleton-ring">
+                  <div class="rw__skeleton-bag rw__skeleton-bag--side-l rw-shimmer-box"></div>
+                  <div class="rw__skeleton-bag rw__skeleton-bag--main">
+                    <div class="rw-shimmer-box" style="width: 56px; height: 56px; border-radius: 12px; opacity: 0.7;"></div>
+                    <div class="rw-shimmer-box" style="width: 72%; height: 14px; border-radius: 4px;"></div>
+                    <div class="rw-shimmer-box" style="width: 52%; height: 10px; border-radius: 4px;"></div>
+                    <div class="rw__skeleton-badge" style="margin-top: 8px;">
+                      <span class="rw__skeleton-dot"></span>
+                      <span>Đang đồng bộ dữ liệu...</span>
+                    </div>
                   </div>
-                </div>
-                <div class="rw__model" data-rw-model data-index="1" data-look-key="XckgG6" style="--rw-ar:0.5625">
-                  <div class="rw__model-inner">
-                    <span class="rw__ground" aria-hidden="true"></span>
-                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-5.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 415 — Heo Thịt Phát Triển (30–60kg)">
-                  </div>
-                </div>
-                <div class="rw__model" data-rw-model data-index="2" data-look-key="rLfAhC" style="--rw-ar:0.5625">
-                  <div class="rw__model-inner">
-                    <span class="rw__ground" aria-hidden="true"></span>
-                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-4.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 418 — Heo Xuất Chuồng (60kg–Bán)">
-                  </div>
-                </div>
-                <div class="rw__model" data-rw-model data-index="3" data-look-key="FKg67q" style="--rw-ar:0.5625">
-                  <div class="rw__model-inner">
-                    <span class="rw__ground" aria-hidden="true"></span>
-                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-6.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 412 — Heo Con Tập Ăn (7–15kg)">
-                  </div>
-                </div>
-                <div class="rw__model" data-rw-model data-index="4" data-look-key="8KREEE" style="--rw-ar:0.5625">
-                  <div class="rw__model-inner">
-                    <span class="rw__ground" aria-hidden="true"></span>
-                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-3.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 416 — Heo Nái Mang Thai">
-                  </div>
-                </div>
-                <div class="rw__model" data-rw-model data-index="5" data-look-key="N3bfm9" style="--rw-ar:0.5625">
-                  <div class="rw__model-inner">
-                    <span class="rw__ground" aria-hidden="true"></span>
-                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-2.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 420 — Heo Nái Nuôi Con &amp; Tiết Sữa">
-                  </div>
+                  <div class="rw__skeleton-bag rw__skeleton-bag--side-r rw-shimmer-box"></div>
                 </div>
               </div>
 
-              <!-- Heroes (6 interactive figures with numbered specification pins) -->
-              <div class="rw__heroes" data-rw-heroes>
-                <!-- Hero 0: Cám 414 -->
-                <div class="rw__hero is-active" data-rw-hero data-index="0" data-name="Cám 414 — Heo Choai (15–30kg)" data-probe="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" style="--rw-ar:0.5625">
-                  <figure class="rw__figure" data-rw-figure>
-                    <span class="rw__ground" aria-hidden="true"></span>
-                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 414 — Heo Choai (15–30kg)">
-                    <button type="button" class="rw__pin" data-rw-pin="1" data-tip="Đối tượng: Heo choai (15–30 kg)" style="left:47%;top:27%;--pin-i:0" aria-label="Chỉ tiêu 1: Đối tượng: Heo choai (15–30 kg)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">1</span></button>
-                    <button type="button" class="rw__pin" data-rw-pin="2" data-tip="Độ tuổi: 45–70 Ngày (Giai đoạn 15–30 kg)" style="left:48%;top:58%;--pin-i:1" aria-label="Chỉ tiêu 2: Độ tuổi: 45–70 Ngày (Giai đoạn 15–30 kg)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">2</span></button>
-                    <button type="button" class="rw__pin" data-rw-pin="3" data-tip="Dinh dưỡng: 17.5%–19.0% Đạm thô · 3.250 kcal ME" style="left:45%;top:96%;--pin-i:2" aria-label="Chỉ tiêu 3: Dinh dưỡng: 17.5%–19.0% Đạm thô · 3.250 kcal ME"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">3</span></button>
-                  </figure>
-                </div>
-                <!-- Hero 1: Cám 415 -->
-                <div class="rw__hero" data-rw-hero data-index="1" data-name="Cám 415 — Heo Thịt Phát Triển (30–60kg)" data-probe="https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp" style="--rw-ar:0.5625">
-                  <figure class="rw__figure" data-rw-figure>
-                    <span class="rw__ground" aria-hidden="true"></span>
-                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-5.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 415 — Heo Thịt Phát Triển (30–60kg)">
-                    <button type="button" class="rw__pin" data-rw-pin="1" data-tip="Đối tượng: Heo thịt phát triển (30–60 kg)" style="left:50%;top:28%;--pin-i:0" aria-label="Chỉ tiêu 1: Đối tượng: Heo thịt phát triển (30–60 kg)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">1</span></button>
-                    <button type="button" class="rw__pin" data-rw-pin="2" data-tip="Độ tuổi: 70–110 Ngày (Giai đoạn 30–60 kg)" style="left:48%;top:58%;--pin-i:1" aria-label="Chỉ tiêu 2: Độ tuổi: 70–110 Ngày (Giai đoạn 30–60 kg)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">2</span></button>
-                    <button type="button" class="rw__pin" data-rw-pin="3" data-tip="Dinh dưỡng: 15.0%–16.5% Đạm thô · 3.150 kcal ME" style="left:45%;top:88%;--pin-i:2" aria-label="Chỉ tiêu 3: Dinh dưỡng: 15.0%–16.5% Đạm thô · 3.150 kcal ME"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">3</span></button>
-                  </figure>
-                </div>
-                <!-- Hero 2: Cám 418 -->
-                <div class="rw__hero" data-rw-hero data-index="2" data-name="Cám 418 — Heo Xuất Chuồng (60kg–Bán)" data-probe="https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp" style="--rw-ar:0.5625">
-                  <figure class="rw__figure" data-rw-figure>
-                    <span class="rw__ground" aria-hidden="true"></span>
-                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-4.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 418 — Heo Xuất Chuồng (60kg–Bán)">
-                    <button type="button" class="rw__pin" data-rw-pin="1" data-tip="Đối tượng: Heo thịt vỗ béo (Trên 60 kg)" style="left:50%;top:28%;--pin-i:0" aria-label="Chỉ tiêu 1: Đối tượng: Heo thịt vỗ béo (Trên 60 kg)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">1</span></button>
-                    <button type="button" class="rw__pin" data-rw-pin="2" data-tip="Độ tuổi: Trên 110 Ngày (60kg đến xuất bán)" style="left:48%;top:58%;--pin-i:1" aria-label="Chỉ tiêu 2: Độ tuổi: Trên 110 Ngày (60kg đến xuất bán)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">2</span></button>
-                    <button type="button" class="rw__pin" data-rw-pin="3" data-tip="Dinh dưỡng: 15.0%–16.5% Đạm thô · 3.150 kcal ME" style="left:45%;top:88%;--pin-i:2" aria-label="Chỉ tiêu 3: Dinh dưỡng: 15.0%–16.5% Đạm thô · 3.150 kcal ME"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">3</span></button>
-                  </figure>
-                </div>
-                <!-- Hero 3: Cám 412 -->
-                <div class="rw__hero" data-rw-hero data-index="3" data-name="Cám 412 — Heo Con Tập Ăn (7–15kg)" data-probe="https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp" style="--rw-ar:0.5625">
-                  <figure class="rw__figure" data-rw-figure>
-                    <span class="rw__ground" aria-hidden="true"></span>
-                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-6.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 412 — Heo Con Tập Ăn (7–15kg)">
-                    <button type="button" class="rw__pin" data-rw-pin="1" data-tip="Đối tượng: Heo con tập ăn (7–15 kg)" style="left:50%;top:28%;--pin-i:0" aria-label="Chỉ tiêu 1: Đối tượng: Heo con tập ăn (7–15 kg)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">1</span></button>
-                    <button type="button" class="rw__pin" data-rw-pin="2" data-tip="Độ tuổi: Tập ăn đến 45 Ngày tuổi" style="left:48%;top:58%;--pin-i:1" aria-label="Chỉ tiêu 2: Độ tuổi: Tập ăn đến 45 Ngày tuổi"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">2</span></button>
-                    <button type="button" class="rw__pin" data-rw-pin="3" data-tip="Dinh dưỡng: 19.5%–21.0% Đạm thô · 3.350 kcal ME" style="left:45%;top:88%;--pin-i:2" aria-label="Chỉ tiêu 3: Dinh dưỡng: 19.5%–21.0% Đạm thô · 3.350 kcal ME"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">3</span></button>
-                  </figure>
-                </div>
-                <!-- Hero 4: Cám 416 -->
-                <div class="rw__hero" data-rw-hero data-index="4" data-name="Cám 416 — Heo Nái Mang Thai" data-probe="https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp" style="--rw-ar:0.5625">
-                  <figure class="rw__figure" data-rw-figure>
-                    <span class="rw__ground" aria-hidden="true"></span>
-                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-3.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 416 — Heo Nái Mang Thai">
-                    <button type="button" class="rw__pin" data-rw-pin="1" data-tip="Đối tượng: Heo nái hậu bị &amp; mang thai" style="left:50%;top:28%;--pin-i:0" aria-label="Chỉ tiêu 1: Đối tượng: Heo nái hậu bị &amp; mang thai"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">1</span></button>
-                    <button type="button" class="rw__pin" data-rw-pin="2" data-tip="Giai đoạn: Phối giống &amp; mang thai 114 ngày" style="left:48%;top:58%;--pin-i:1" aria-label="Chỉ tiêu 2: Giai đoạn: Phối giống &amp; mang thai 114 ngày"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">2</span></button>
-                    <button type="button" class="rw__pin" data-rw-pin="3" data-tip="Dinh dưỡng: 14.5%–15.5% Đạm thô · 3.050 kcal ME" style="left:45%;top:88%;--pin-i:2" aria-label="Chỉ tiêu 3: Dinh dưỡng: 14.5%–15.5% Đạm thô · 3.050 kcal ME"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">3</span></button>
-                  </figure>
-                </div>
-                <!-- Hero 5: Cám 420 -->
-                <div class="rw__hero" data-rw-hero data-index="5" data-name="Cám 420 — Heo Nái Nuôi Con &amp; Tiết Sữa" data-probe="https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp" style="--rw-ar:0.5625">
-                  <figure class="rw__figure" data-rw-figure>
-                    <span class="rw__ground" aria-hidden="true"></span>
-                    <img src="https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp" srcset="https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp 640w, https://reel-ref-try-the-look.vercel.app/assets/original-look-2.webp 1080w" sizes="(min-width: 1800px) 540px, (min-width: 750px) 420px, 320px" loading="eager" decoding="async" width="1100" height="1956" draggable="false" data-model-image alt="Cám 420 — Heo Nái Nuôi Con &amp; Tiết Sữa">
-                    <button type="button" class="rw__pin" data-rw-pin="1" data-tip="Đối tượng: Heo nái đẻ &amp; nuôi con tiết sữa" style="left:50%;top:28%;--pin-i:0" aria-label="Chỉ tiêu 1: Đối tượng: Heo nái đẻ &amp; nuôi con tiết sữa"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">1</span></button>
-                    <button type="button" class="rw__pin" data-rw-pin="2" data-tip="Giai đoạn: Nuôi con tiết sữa (21–28 ngày)" style="left:48%;top:58%;--pin-i:1" aria-label="Chỉ tiêu 2: Giai đoạn: Nuôi con tiết sữa (21–28 ngày)"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">2</span></button>
-                    <button type="button" class="rw__pin" data-rw-pin="3" data-tip="Dinh dưỡng: 18.0%–19.5% Đạm thô · 3.300 kcal ME" style="left:45%;top:88%;--pin-i:2" aria-label="Chỉ tiêu 3: Dinh dưỡng: 18.0%–19.5% Đạm thô · 3.300 kcal ME"><span class="rw__pin-ring" aria-hidden="true"></span><span class="rw__pin-dot">3</span></button>
-                  </figure>
-                </div>
-              </div>
+              <!-- Queue Bodies (Populated after server fetch completes) -->
+              <div class="rw__actors" data-rw-actors></div>
+
+              <!-- Heroes (Populated after server fetch completes) -->
+              <div class="rw__heroes" data-rw-heroes></div>
 
               <span class="rw__sweep" aria-hidden="true"></span>
               <span class="rw__cursor" data-rw-cursor aria-hidden="true">
@@ -1656,32 +1742,26 @@
                   <path d="M15 18l-6-6 6-6"></path>
                 </svg>
               </button>
-              <div class="rw__ticks" role="tablist" aria-label="Danh mục công thức cám">
-                <button type="button" class="rw__tick is-active" role="tab" data-rw-tick="0" aria-selected="true">
-                  <span class="rw__tick-num" data-rw-tick-label="0">Cám 414 — Heo Choai (15–30kg)</span>
-                  <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
-                </button>
-                <button type="button" class="rw__tick" role="tab" data-rw-tick="1" aria-selected="false">
-                  <span class="rw__tick-num" data-rw-tick-label="1">Cám 415 — Heo Thịt Phát Triển (30–60kg)</span>
-                  <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
-                </button>
-                <button type="button" class="rw__tick" role="tab" data-rw-tick="2" aria-selected="false">
-                  <span class="rw__tick-num" data-rw-tick-label="2">Cám 418 — Heo Xuất Chuồng (60kg–Bán)</span>
-                  <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
-                </button>
-                <button type="button" class="rw__tick" role="tab" data-rw-tick="3" aria-selected="false">
-                  <span class="rw__tick-num" data-rw-tick-label="3">Cám 412 — Heo Con Tập Ăn (7–15kg)</span>
-                  <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
-                </button>
-                <button type="button" class="rw__tick" role="tab" data-rw-tick="4" aria-selected="false">
-                  <span class="rw__tick-num" data-rw-tick-label="4">Cám 416 — Heo Nái Mang Thai</span>
-                  <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
-                </button>
-                <button type="button" class="rw__tick" role="tab" data-rw-tick="5" aria-selected="false">
-                  <span class="rw__tick-num" data-rw-tick-label="5">Cám 420 — Heo Nái Nuôi Con &amp; Tiết Sữa</span>
-                  <span class="rw__tick-bar"><span class="rw__tick-fill"></span></span>
-                </button>
+              <!-- Skeleton Ticks (Shown while isLoading === true) -->
+              <div class="rw__skeleton-ticks" data-rw-skeleton-ticks aria-hidden="true">
+                <div class="rw__skeleton-tick">
+                  <div class="rw-shimmer-box" style="height: 12px; width: 85%; border-radius: 4px;"></div>
+                  <div class="rw-shimmer-box" style="height: 3px; width: 100%; border-radius: 2px;"></div>
+                </div>
+                <div class="rw__skeleton-tick">
+                  <div class="rw-shimmer-box" style="height: 12px; width: 78%; border-radius: 4px;"></div>
+                  <div class="rw-shimmer-box" style="height: 3px; width: 100%; border-radius: 2px;"></div>
+                </div>
+                <div class="rw__skeleton-tick">
+                  <div class="rw-shimmer-box" style="height: 12px; width: 82%; border-radius: 4px;"></div>
+                  <div class="rw-shimmer-box" style="height: 3px; width: 100%; border-radius: 2px;"></div>
+                </div>
+                <div class="rw__skeleton-tick">
+                  <div class="rw-shimmer-box" style="height: 12px; width: 74%; border-radius: 4px;"></div>
+                  <div class="rw-shimmer-box" style="height: 3px; width: 100%; border-radius: 2px;"></div>
+                </div>
               </div>
+              <div class="rw__ticks" role="tablist" aria-label="Danh mục công thức cám"></div>
               <button type="button" class="rw__auto" data-rw-auto aria-label="Tạm dừng tự động" aria-pressed="false">
                 <svg class="rw__ic-pause" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <rect x="6" y="4" width="4" height="16"></rect>
@@ -1704,7 +1784,7 @@
               <div class="rw__lb-head">
                 <div class="rw__lb-meta">
                   <span class="rw__lb-kicker" data-rw-lb-kicker>Công thức</span>
-                  <h4 class="rw__lb-title" data-rw-lb-title>Cám 414 — Heo Choai (15–30kg)</h4>
+                  <h4 class="rw__lb-title" data-rw-lb-title></h4>
                 </div>
                 <button type="button" class="rw__lb-close" data-rw-lb-close aria-label="Đóng cửa sổ xem bao cám">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -1724,6 +1804,40 @@
               <div class="rw__panel-head">
                 <h3 class="rw__panel-title">Chi Tiết Sản Phẩm</h3>
               </div>
+              <!-- Skeleton Panel (Shown while isLoading === true) -->
+              <div class="rw__skeleton-panel" data-rw-skeleton-panel aria-hidden="true">
+                <div class="rw__skeleton-row">
+                  <div class="rw-shimmer-box" style="width: 92px; height: 92px; border-radius: 8px;"></div>
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div class="rw-shimmer-box" style="width: 55%; height: 10px; border-radius: 3px;"></div>
+                    <div class="rw-shimmer-box" style="width: 90%; height: 14px; border-radius: 4px;"></div>
+                    <div class="rw-shimmer-box" style="width: 75%; height: 11px; border-radius: 3px;"></div>
+                  </div>
+                </div>
+                <div class="rw__skeleton-row">
+                  <div class="rw-shimmer-box" style="width: 92px; height: 92px; border-radius: 8px;"></div>
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div class="rw-shimmer-box" style="width: 60%; height: 10px; border-radius: 3px;"></div>
+                    <div class="rw-shimmer-box" style="width: 85%; height: 14px; border-radius: 4px;"></div>
+                    <div class="rw-shimmer-box" style="width: 70%; height: 11px; border-radius: 3px;"></div>
+                  </div>
+                </div>
+                <div class="rw__skeleton-row">
+                  <div class="rw-shimmer-box" style="width: 92px; height: 92px; border-radius: 8px;"></div>
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div class="rw-shimmer-box" style="width: 52%; height: 10px; border-radius: 3px;"></div>
+                    <div class="rw-shimmer-box" style="width: 92%; height: 14px; border-radius: 4px;"></div>
+                    <div class="rw-shimmer-box" style="width: 68%; height: 11px; border-radius: 3px;"></div>
+                  </div>
+                </div>
+                <div style="padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                  <div style="display: flex; flex-direction: column; gap: 6px; width: 62%;">
+                    <div class="rw-shimmer-box" style="width: 90%; height: 12px; border-radius: 3px;"></div>
+                    <div class="rw-shimmer-box" style="width: 75%; height: 10px; border-radius: 3px;"></div>
+                  </div>
+                  <div class="rw-shimmer-box" style="width: 28%; height: 18px; border-radius: 4px;"></div>
+                </div>
+              </div>
               <div class="rw__panels" data-rw-panels></div>
             </div>
           </aside>
@@ -1732,7 +1846,7 @@
     </runway-section>
   </main>
 
-  <!-- 3. Password-Protected Admin CMS Modal (ID: admin / Password: adminsale) -->
+  <!-- 3. Password-Protected Admin CMS Modal -->
   <dialog id="admin-dialog" aria-labelledby="admin-dialog-title">
     <div class="dlg-wrap">
       <div class="dlg-head">
@@ -1782,7 +1896,7 @@
           <!-- Slot Selector Tabs & Add Product Button -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #151413;">
-              Danh Sách Sản Phẩm Trưng Bày (<span id="admin-product-count">6</span> sản phẩm)
+              Danh Sách Sản Phẩm Trưng Bày (<span id="admin-product-count">0</span> sản phẩm)
             </div>
             <button type="button" class="btn-primary" id="admin-add-product" style="padding: 7px 14px; font-size: 11px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
@@ -1798,7 +1912,7 @@
           <div class="admin-grid-top">
             <div>
               <div class="admin-bag-preview" id="admin-bag-preview-box" title="Nhấp chuột vào ảnh bao cám để kiểm tra vị trí điểm pin">
-                <img id="admin-bag-preview-img" src="https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp" alt="Xem trước mẫu bao cám">
+                <img id="admin-bag-preview-img" src="" alt="Xem trước mẫu bao cám">
               </div>
               <!-- Tinh chỉnh Kích Thước (Phóng To / Thu Nhỏ) & Vị Trí (Lên / Xuống) -->
               <div class="admin-offset-card" style="margin-top: 10px; background: #fafaf9; border: 1px solid #e7e5e4; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 10px;">
