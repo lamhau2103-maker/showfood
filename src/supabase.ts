@@ -54,7 +54,24 @@ export function appendCacheVersion(url: string, version: string | number): strin
 }
 
 /**
- * Applies cache-busting `?v=${version}` to all image URLs in SiteConfigPayload.
+ * Checks whether an image URL belongs to the old clothing/shoe template (reel-ref-try-the-look or shoe/shirt/hoodie assets).
+ */
+export function isLegacyTemplateImageUrl(url: unknown): boolean {
+  if (typeof url !== 'string' || !url.trim()) return true;
+  const lower = url.trim().toLowerCase();
+  return (
+    lower.includes('reel-ref-try-the-look') ||
+    lower.includes('source-tatum') ||
+    lower.includes('source-air-jordan') ||
+    lower.includes('source-tshirt') ||
+    lower.includes('source-sweatshirt') ||
+    lower.includes('source-hoodie')
+  );
+}
+
+/**
+ * Applies cache-busting `?v=${version}` to all image URLs in SiteConfigPayload,
+ * and resets any legacy sample URLs in product specs to empty string "".
  */
 export function applyCacheBustingToPayload(
   payload: SiteConfigPayload,
@@ -68,16 +85,24 @@ export function applyCacheBustingToPayload(
   if (Array.isArray(cloned.looks)) {
     cloned.looks.forEach((look) => {
       if (look && typeof look === 'object') {
-        if (typeof look.img640 === 'string' && look.img640) {
-          look.img640 = appendCacheVersion(look.img640, version);
+        if (typeof look.img640 === 'string') {
+          look.img640 = isLegacyTemplateImageUrl(look.img640)
+            ? ''
+            : appendCacheVersion(look.img640, version);
         }
-        if (typeof look.img1080 === 'string' && look.img1080) {
-          look.img1080 = appendCacheVersion(look.img1080, version);
+        if (typeof look.img1080 === 'string') {
+          look.img1080 = isLegacyTemplateImageUrl(look.img1080)
+            ? ''
+            : appendCacheVersion(look.img1080, version);
         }
         if (Array.isArray(look.specs)) {
           look.specs.forEach((sp: any) => {
-            if (sp && typeof sp.thumb === 'string' && sp.thumb) {
-              sp.thumb = appendCacheVersion(sp.thumb, version);
+            if (sp && typeof sp === 'object') {
+              if (isLegacyTemplateImageUrl(sp.thumb)) {
+                sp.thumb = '';
+              } else if (typeof sp.thumb === 'string' && sp.thumb) {
+                sp.thumb = appendCacheVersion(sp.thumb, version);
+              }
             }
           });
         }

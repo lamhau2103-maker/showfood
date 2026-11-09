@@ -10,6 +10,7 @@ import {
   supabase,
   fetchSiteConfigFromSupabase,
   saveSiteConfigToSupabase,
+  isLegacyTemplateImageUrl,
   SiteConfigPayload,
 } from './supabase';
 
@@ -58,19 +59,13 @@ export const EMPTY_BAG_PLACEHOLDER =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 1138" width="640" height="1138"><rect x="110" y="130" width="420" height="880" rx="28" fill="rgba(255,255,255,0.55)" stroke="rgba(21,20,19,0.18)" stroke-width="3" stroke-dasharray="12 8"/><circle cx="320" cy="510" r="38" fill="rgba(21,20,19,0.05)" stroke="rgba(21,20,19,0.2)" stroke-width="2"/><path d="M320 492v36M302 510h36" stroke="rgba(21,20,19,0.35)" stroke-width="2.5" stroke-linecap="round"/><text x="320" y="585" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="rgba(21,20,19,0.48)" letter-spacing="1.5">CHỜ CẬP NHẬT HÌNH ẢNH</text><text x="320" y="614" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" font-weight="400" fill="rgba(21,20,19,0.35)">Tải ảnh bao bì trong Quản trị</text></svg>`
   );
 
-export const EMPTY_THUMB_PLACEHOLDER =
-  'data:image/svg+xml;charset=UTF-8,' +
-  encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400"><rect x="8" y="8" width="384" height="384" rx="20" fill="#f3f2ee" stroke="rgba(21,20,19,0.16)" stroke-width="2" stroke-dasharray="8 6"/><path d="M200 172v56M172 200h56" stroke="rgba(21,20,19,0.3)" stroke-width="3" stroke-linecap="round"/><text x="200" y="264" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="rgba(21,20,19,0.42)" letter-spacing="1">CHỜ ẢNH</text></svg>`
-  );
-
 const CATALOG_TEMPLATES: Record<string, Omit<BagSpecItem, 'tag' | 'pinLeft' | 'pinTop'>> = {
-  'tatum-5-orbit-copy': {
-    catalogId: 'tatum-5-orbit-copy',
+  'spec-target-grower': {
+    catalogId: 'spec-target-grower',
     type: 'ĐỐI TƯỢNG VẬT NUÔI | MÃ 414',
     title: 'Đối tượng: Heo choai (15–30 kg)',
     specNote: 'Phát triển khung xương & hoàn thiện hệ tiêu hóa',
-    thumb: 'https://reel-ref-try-the-look.vercel.app/assets/source-tatum-5-orbit-copy.webp',
+    thumb: '',
     thumbW: 400,
     thumbH: 400,
     legend: 'Đường kính viên cám (mm)',
@@ -85,12 +80,12 @@ const CATALOG_TEMPLATES: Record<string, Omit<BagSpecItem, 'tag' | 'pinLeft' | 'p
     ],
     link: '#',
   },
-  'tatum-5-orbit': {
-    catalogId: 'tatum-5-orbit',
+  'spec-target-finisher': {
+    catalogId: 'spec-target-finisher',
     type: 'ĐỐI TƯỢNG VẬT NUÔI | MÃ 415 / 418',
     title: 'Đối tượng: Heo thịt phát triển (30–60 kg)',
     specNote: 'Tỷ lệ nạc cao, thớ thịt săn chắc & mỡ mỏng',
-    thumb: 'https://reel-ref-try-the-look.vercel.app/assets/source-tatum-5-orbit.webp',
+    thumb: '',
     thumbW: 400,
     thumbH: 400,
     legend: 'Đường kính viên cám (mm)',
@@ -105,12 +100,12 @@ const CATALOG_TEMPLATES: Record<string, Omit<BagSpecItem, 'tag' | 'pinLeft' | 'p
     ],
     link: '#',
   },
-  'air-jordan-12-retro-copy': {
-    catalogId: 'air-jordan-12-retro-copy',
+  'spec-target-breeder': {
+    catalogId: 'spec-target-breeder',
     type: 'ĐỐI TƯỢNG VẬT NUÔI | DÒNG SINH SẢN',
     title: 'Đối tượng: Heo nái sinh sản & Heo con',
     specNote: 'Tăng cường miễn dịch & thể trạng sinh sản tối ưu',
-    thumb: 'https://reel-ref-try-the-look.vercel.app/assets/source-air-jordan-12-retro-copy.webp',
+    thumb: '',
     thumbW: 400,
     thumbH: 400,
     legend: 'Đường kính viên cám (mm)',
@@ -125,12 +120,12 @@ const CATALOG_TEMPLATES: Record<string, Omit<BagSpecItem, 'tag' | 'pinLeft' | 'p
     ],
     link: '#',
   },
-  'tshirt': {
-    catalogId: 'tshirt',
+  'spec-age-grower': {
+    catalogId: 'spec-age-grower',
     type: 'ĐỘ TUỔI & TRỌNG LƯỢNG PHÙ HỢP',
     title: 'Độ tuổi: 45–70 Ngày (Giai đoạn 15–30 kg)',
     specNote: 'FCR mục tiêu: 1.55 – 1.65 · Cho ăn tự do',
-    thumb: 'https://reel-ref-try-the-look.vercel.app/assets/source-tshirt.webp',
+    thumb: '',
     thumbW: 400,
     thumbH: 563,
     legend: 'Quy cách đóng bao',
@@ -142,12 +137,12 @@ const CATALOG_TEMPLATES: Record<string, Omit<BagSpecItem, 'tag' | 'pinLeft' | 'p
     ],
     link: '#',
   },
-  'sweatshirt': {
-    catalogId: 'sweatshirt',
+  'spec-age-finisher': {
+    catalogId: 'spec-age-finisher',
     type: 'ĐỘ TUỔI & TRỌNG LƯỢNG PHÙ HỢP',
     title: 'Độ tuổi: 70–110 Ngày (Giai đoạn 30–60 kg)',
     specNote: 'FCR mục tiêu: 2.05 – 2.15 · Khẩu phần 2.2–2.8 kg/ngày',
-    thumb: 'https://reel-ref-try-the-look.vercel.app/assets/source-sweatshirt.webp',
+    thumb: '',
     thumbW: 400,
     thumbH: 581,
     legend: 'Quy cách đóng bao',
@@ -159,12 +154,12 @@ const CATALOG_TEMPLATES: Record<string, Omit<BagSpecItem, 'tag' | 'pinLeft' | 'p
     ],
     link: '#',
   },
-  'sweatshirt-plus': {
-    catalogId: 'sweatshirt-plus',
+  'spec-age-market': {
+    catalogId: 'spec-age-market',
     type: 'ĐỘ TUỔI & TRỌNG LƯỢNG PHÙ HỢP',
     title: 'Độ tuổi: Trên 110 Ngày (60kg đến xuất chuồng)',
     specNote: 'FCR mục tiêu: 2.35 – 2.50 · Vỗ béo xuất bán',
-    thumb: 'https://reel-ref-try-the-look.vercel.app/assets/source-sweatshirt-plus.webp',
+    thumb: '',
     thumbW: 400,
     thumbH: 610,
     legend: 'Quy cách đóng bao',
@@ -176,12 +171,12 @@ const CATALOG_TEMPLATES: Record<string, Omit<BagSpecItem, 'tag' | 'pinLeft' | 'p
     ],
     link: '#',
   },
-  'hoodie': {
-    catalogId: 'hoodie',
+  'spec-nutri-high': {
+    catalogId: 'spec-nutri-high',
     type: 'CHỈ TIÊU DINH DƯỠNG ĐẢM BẢO',
     title: 'Dinh dưỡng: 17.5%–19.0% Đạm thô · 3.250 kcal ME',
     specNote: 'Lysine ≥ 1.15% · Độ ẩm ≤ 14% · Xơ thô ≤ 5%',
-    thumb: 'https://reel-ref-try-the-look.vercel.app/assets/source-hoodie.webp',
+    thumb: '',
     thumbW: 400,
     thumbH: 555,
     legend: 'Công thức Premix vi lượng',
@@ -193,12 +188,12 @@ const CATALOG_TEMPLATES: Record<string, Omit<BagSpecItem, 'tag' | 'pinLeft' | 'p
     ],
     link: '#',
   },
-  'hoodie-black': {
-    catalogId: 'hoodie-black',
+  'spec-nutri-std': {
+    catalogId: 'spec-nutri-std',
     type: 'CHỈ TIÊU DINH DƯỠNG ĐẢM BẢO',
     title: 'Dinh dưỡng: 15.0%–16.5% Đạm thô · 3.150 kcal ME',
     specNote: 'Lysine ≥ 0.95% · Độ ẩm ≤ 14% · Xơ thô ≤ 6%',
-    thumb: 'https://reel-ref-try-the-look.vercel.app/assets/source-hoodie-black.webp',
+    thumb: '',
     thumbW: 400,
     thumbH: 536,
     legend: 'Công thức Premix vi lượng',
@@ -216,18 +211,51 @@ function makeSpec(
   id: string,
   pinLeft: number,
   pinTop: number,
-  tag = '',
-  emptyThumb = false
+  tag = ''
 ): BagSpecItem {
-  const base = CATALOG_TEMPLATES[id];
+  const base = CATALOG_TEMPLATES[id] || CATALOG_TEMPLATES['spec-target-grower'];
   return {
     ...base,
-    thumb: emptyThumb ? '' : base.thumb,
+    thumb: '',
     options: base.options.map((o) => ({ ...o })),
     tag,
     pinLeft,
     pinTop,
   };
+}
+
+/**
+ * Checks all products and their 3 specification items ('Chi Tiết Sản Phẩm').
+ * Any spec item or product image still referencing the old template domain or shoe/shirt/hoodie sample images
+ * is automatically reset to an empty string "".
+ */
+export function sanitizeLoadedLooks(looks: FeedBagLook[]): FeedBagLook[] {
+  if (!Array.isArray(looks)) return [];
+  return looks.map((look, idx) => {
+    const cleanImg640 = isLegacyTemplateImageUrl(look?.img640) ? '' : String(look.img640 || '').trim();
+    const cleanImg1080 = isLegacyTemplateImageUrl(look?.img1080) ? '' : String(look.img1080 || '').trim();
+    const rawSpecs = Array.isArray(look?.specs) ? look.specs : [];
+    const cleanedSpecs = [0, 1, 2].map((sIdx) => {
+      const sp = rawSpecs[sIdx];
+      if (!sp || typeof sp !== 'object') {
+        const defaultIds = ['spec-target-grower', 'spec-age-grower', 'spec-nutri-high'];
+        return makeSpec(defaultIds[sIdx], 48, 28 + sIdx * 30, '');
+      }
+      const cleanThumb = isLegacyTemplateImageUrl(sp.thumb) ? '' : String(sp.thumb || '').trim();
+      return {
+        ...sp,
+        thumb: cleanThumb,
+      };
+    }) as [BagSpecItem, BagSpecItem, BagSpecItem];
+
+    return {
+      ...look,
+      index: typeof look?.index === 'number' ? look.index : idx,
+      img640: cleanImg640,
+      img1080: cleanImg1080 || cleanImg640,
+      specs: cleanedSpecs,
+    };
+  });
 }
 
 export function getDefaultLooks(): FeedBagLook[] {
@@ -237,16 +265,16 @@ export function getDefaultLooks(): FeedBagLook[] {
       key: 'bndthK',
       code: '414',
       name: 'Cám 414 — Heo Choai (15–30kg)',
-      img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-1-640.webp',
-      img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-1.webp',
+      img640: '',
+      img1080: '',
       offsetY: 0,
       scale: 1,
       pieces: '3 chỉ tiêu',
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
-        makeSpec('tatum-5-orbit-copy', 47, 27, ''),
-        makeSpec('tshirt', 48, 58, ''),
-        makeSpec('hoodie', 45, 96, ''),
+        makeSpec('spec-target-grower', 47, 27, ''),
+        makeSpec('spec-age-grower', 48, 58, ''),
+        makeSpec('spec-nutri-high', 45, 96, ''),
       ],
     },
     {
@@ -254,16 +282,16 @@ export function getDefaultLooks(): FeedBagLook[] {
       key: 'XckgG6',
       code: '415',
       name: 'Cám 415 — Heo Thịt Phát Triển (30–60kg)',
-      img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-5-640.webp',
-      img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-5.webp',
+      img640: '',
+      img1080: '',
       offsetY: 0,
       scale: 1,
       pieces: '3 chỉ tiêu',
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
-        makeSpec('tatum-5-orbit', 50, 28, ''),
-        makeSpec('sweatshirt', 48, 58, ''),
-        makeSpec('hoodie-black', 45, 88, ''),
+        makeSpec('spec-target-finisher', 50, 28, ''),
+        makeSpec('spec-age-finisher', 48, 58, ''),
+        makeSpec('spec-nutri-std', 45, 88, ''),
       ],
     },
     {
@@ -271,16 +299,16 @@ export function getDefaultLooks(): FeedBagLook[] {
       key: 'rLfAhC',
       code: '418',
       name: 'Cám 418 — Heo Xuất Chuồng (60kg–Bán)',
-      img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-4-640.webp',
-      img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-4.webp',
+      img640: '',
+      img1080: '',
       offsetY: 0,
       scale: 1,
       pieces: '3 chỉ tiêu',
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
-        makeSpec('tatum-5-orbit', 50, 28, ''),
-        makeSpec('sweatshirt-plus', 48, 58, ''),
-        makeSpec('hoodie-black', 45, 88, ''),
+        makeSpec('spec-target-finisher', 50, 28, ''),
+        makeSpec('spec-age-market', 48, 58, ''),
+        makeSpec('spec-nutri-std', 45, 88, ''),
       ],
     },
     {
@@ -288,16 +316,16 @@ export function getDefaultLooks(): FeedBagLook[] {
       key: 'FKg67q',
       code: '412',
       name: 'Cám 412 — Heo Con Tập Ăn (7–15kg)',
-      img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-6-640.webp',
-      img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-6.webp',
+      img640: '',
+      img1080: '',
       offsetY: 0,
       scale: 1,
       pieces: '3 chỉ tiêu',
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
-        makeSpec('air-jordan-12-retro-copy', 50, 28, ''),
-        makeSpec('tshirt', 48, 58, ''),
-        makeSpec('hoodie', 45, 88, ''),
+        makeSpec('spec-target-breeder', 50, 28, ''),
+        makeSpec('spec-age-grower', 48, 58, ''),
+        makeSpec('spec-nutri-high', 45, 88, ''),
       ],
     },
     {
@@ -305,16 +333,16 @@ export function getDefaultLooks(): FeedBagLook[] {
       key: '8KREEE',
       code: '416',
       name: 'Cám 416 — Heo Nái Mang Thai',
-      img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-3-640.webp',
-      img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-3.webp',
+      img640: '',
+      img1080: '',
       offsetY: 0,
       scale: 1,
       pieces: '3 chỉ tiêu',
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
-        makeSpec('air-jordan-12-retro-copy', 50, 28, ''),
-        makeSpec('sweatshirt-plus', 48, 58, ''),
-        makeSpec('hoodie-black', 45, 88, ''),
+        makeSpec('spec-target-breeder', 50, 28, ''),
+        makeSpec('spec-age-market', 48, 58, ''),
+        makeSpec('spec-nutri-std', 45, 88, ''),
       ],
     },
     {
@@ -322,16 +350,16 @@ export function getDefaultLooks(): FeedBagLook[] {
       key: 'N3bfm9',
       code: '420',
       name: 'Cám 420 — Heo Nái Nuôi Con & Tiết Sữa',
-      img640: 'https://reel-ref-try-the-look.vercel.app/assets/model-2-640.webp',
-      img1080: 'https://reel-ref-try-the-look.vercel.app/assets/original-look-2.webp',
+      img640: '',
+      img1080: '',
       offsetY: 0,
       scale: 1,
       pieces: '3 chỉ tiêu',
       qualityStd: 'Đạt Chuẩn ISO 22000',
       specs: [
-        makeSpec('air-jordan-12-retro-copy', 50, 28, ''),
-        makeSpec('sweatshirt', 48, 58, ''),
-        makeSpec('hoodie', 45, 88, ''),
+        makeSpec('spec-target-breeder', 50, 28, ''),
+        makeSpec('spec-age-finisher', 48, 58, ''),
+        makeSpec('spec-nutri-high', 45, 88, ''),
       ],
     },
   ];
@@ -346,7 +374,7 @@ export function getInitialFallbackConfig(): { brandLogo: string; looks: FeedBagL
       if (Array.isArray(parsed) && parsed.length >= 1) {
         return {
           brandLogo: storedLogo || DEFAULT_BRAND_LOGO,
-          looks: parsed,
+          looks: sanitizeLoadedLooks(parsed),
         };
       }
     }
@@ -355,7 +383,7 @@ export function getInitialFallbackConfig(): { brandLogo: string; looks: FeedBagL
   }
   return {
     brandLogo: DEFAULT_BRAND_LOGO,
-    looks: getDefaultLooks(),
+    looks: sanitizeLoadedLooks(getDefaultLooks()),
   };
 }
 
@@ -390,18 +418,18 @@ export function initAndSyncSupabaseConfig(): Promise<{ brandLogo: string; looks:
       const remote = await fetchSiteConfigFromSupabase();
       if (remote && Array.isArray(remote.looks) && remote.looks.length > 0) {
         activeBrandLogo = remote.brandLogo || DEFAULT_BRAND_LOGO;
-        activeLooks = remote.looks;
+        activeLooks = sanitizeLoadedLooks(remote.looks);
       } else {
         // Only if server table site_config is empty after fetch completes, use migration fallback
         const fallback = getInitialFallbackConfig();
         activeBrandLogo = fallback.brandLogo;
-        activeLooks = fallback.looks;
+        activeLooks = sanitizeLoadedLooks(fallback.looks);
       }
     } catch (err) {
       console.warn('Không thể nạp cấu hình từ Supabase:', err);
       const fallback = getInitialFallbackConfig();
       activeBrandLogo = fallback.brandLogo;
-      activeLooks = fallback.looks;
+      activeLooks = sanitizeLoadedLooks(fallback.looks);
     } finally {
       setBrandLogo(activeBrandLogo);
       const rw = document.querySelector('runway-section') as RunwaySection | null;
@@ -841,12 +869,13 @@ export class RunwaySection extends HTMLElement {
       const itemsHtml = look.specs
         .map((spec, sIdx) => {
           const cardNum = sIdx + 1;
-          const thumbSrc = spec.thumb || EMPTY_THUMB_PLACEHOLDER;
+          const cleanThumb = !isLegacyTemplateImageUrl(spec.thumb) ? String(spec.thumb || '').trim() : '';
+          const hasThumb = cleanThumb.length > 0;
 
           return `
             <li class="rw__item" data-rw-card="${cardNum}" style="--i:${cardNum}" data-title="${escapeAttr(spec.title)}" data-catalog-id="${escapeAttr(spec.catalogId)}">
-              <div class="rw__thumb">
-                <img src="${escapeAttr(thumbSrc)}" alt="${escapeAttr(spec.title)}" width="${spec.thumbW}" height="${spec.thumbH}" loading="lazy">
+              <div class="rw__thumb${hasThumb ? '' : ' is-empty'}">
+                ${hasThumb ? `<img src="${escapeAttr(cleanThumb)}" alt="${escapeAttr(spec.title)}" width="${spec.thumbW}" height="${spec.thumbH}" loading="lazy">` : ''}
               </div>
               <div class="rw__info">
                 <span class="rw__type">${escapeHtml(spec.type)}</span>
@@ -1120,11 +1149,11 @@ export class RunwaySection extends HTMLElement {
     const useRing = !this.isPhone && (this.dataset.style || 'ring') === 'ring';
     const blurEnabled = this.dataset.blur === 'true';
 
-    // Desktop 3D ring constants:
-    // cx = 0.5W, R = 0.62W, P = 1.65W, floor = H - 34, horizon = 0.36H, fs = 1.08
+    // Desktop 3D ring constants — expanded by +20% (RING_SPREAD = 1.2) to stretch spacing between adjacent products by 20%
+    const RING_SPREAD = 1.2;
     const cx = 0.5 * W;
-    const R = 0.62 * W;
-    const P = 1.65 * W;
+    const R = 0.62 * W * RING_SPREAD;
+    const P = 1.65 * W * RING_SPREAD;
     const floor = H - 34;
     const horizon = 0.36 * H;
     const fs = 1.08;
@@ -1188,10 +1217,10 @@ export class RunwaySection extends HTMLElement {
           }
         }
       } else {
-        // Phone classic diagonal line mode
+        // Phone classic diagonal line mode (+20% spacing between products)
         const ax = 0.38 * W;
         const ay = H - 22;
-        const x = ax + d * 0.24 * W;
+        const x = ax + d * (0.24 * RING_SPREAD) * W;
         const y = ay - d * 0.055 * H;
         const scale = d >= 0 ? Math.pow(0.86, d) : 1 - d * 0.08;
         const opacity = d < -0.15 ? clamp(1 + d * 1.4, 0, 1) : clamp(1 - d * 0.18, 0, 1);
@@ -1571,7 +1600,11 @@ class AdminCmsController {
     ];
 
     look.specs.forEach((spec, sIdx) => {
-      const thumbPreviewSrc = spec.thumb || EMPTY_THUMB_PLACEHOLDER;
+      const cleanThumb = !isLegacyTemplateImageUrl(spec.thumb)
+        ? String(spec.thumb || '').trim()
+        : '';
+      spec.thumb = cleanThumb;
+      const hasThumb = cleanThumb.length > 0;
       const card = document.createElement('div');
       card.className = 'admin-spec-card';
       card.innerHTML = `
@@ -1591,8 +1624,10 @@ class AdminCmsController {
         <div class="admin-field">
           <label>Đường dẫn ảnh thu nhỏ (URL / DataURL)</label>
           <div style="display:flex;gap:6px;align-items:center;">
-            <img src="${escapeAttr(thumbPreviewSrc)}" alt="Thu nhỏ" data-spec-thumb-preview="${sIdx}" style="width:36px;height:36px;object-fit:cover;border:1px solid #c8c8c8;border-radius:6px;flex-shrink:0;">
-            <input type="text" data-spec-field="thumb" data-spec-idx="${sIdx}" value="${escapeAttr(spec.thumb || '')}" placeholder="Chờ cập nhật hình ảnh..." style="flex:1;min-width:0;">
+            <div class="admin-thumb-box${hasThumb ? '' : ' is-empty'}" data-spec-thumb-box="${sIdx}">
+              <img ${hasThumb ? `src="${escapeAttr(cleanThumb)}"` : 'hidden'} alt="Thu nhỏ" data-spec-thumb-preview="${sIdx}">
+            </div>
+            <input type="text" data-spec-field="thumb" data-spec-idx="${sIdx}" value="${escapeAttr(cleanThumb)}" placeholder="Chờ cập nhật hình ảnh..." style="flex:1;min-width:0;">
           </div>
           <label class="btn-outline" style="margin-top:4px;text-align:center;cursor:pointer;font-size:11px;padding:6px 12px;">
             Tải Lên Ảnh Thu Nhỏ
@@ -1614,9 +1649,23 @@ class AdminCmsController {
       // Bind live input update on thumb URL field
       const thumbInputEl = card.querySelector<HTMLInputElement>(`[data-spec-field="thumb"][data-spec-idx="${sIdx}"]`);
       const thumbPrevEl = card.querySelector<HTMLImageElement>(`[data-spec-thumb-preview="${sIdx}"]`);
+      const thumbBoxEl = card.querySelector<HTMLElement>(`[data-spec-thumb-box="${sIdx}"]`);
       thumbInputEl?.addEventListener('input', () => {
-        const val = thumbInputEl.value.trim();
-        if (thumbPrevEl) thumbPrevEl.src = val || EMPTY_THUMB_PLACEHOLDER;
+        const rawVal = thumbInputEl.value.trim();
+        const val = !isLegacyTemplateImageUrl(rawVal) ? rawVal : '';
+        if (val) {
+          if (thumbPrevEl) {
+            thumbPrevEl.src = val;
+            thumbPrevEl.hidden = false;
+          }
+          thumbBoxEl?.classList.remove('is-empty');
+        } else {
+          if (thumbPrevEl) {
+            thumbPrevEl.removeAttribute('src');
+            thumbPrevEl.hidden = true;
+          }
+          thumbBoxEl?.classList.add('is-empty');
+        }
         look.specs[sIdx].thumb = val;
       });
 
@@ -1627,7 +1676,11 @@ class AdminCmsController {
         if (!file) return;
         this.readImageFileAsDataUrl(file, 400, (dataUrl) => {
           if (thumbInputEl) thumbInputEl.value = dataUrl;
-          if (thumbPrevEl) thumbPrevEl.src = dataUrl;
+          if (thumbPrevEl) {
+            thumbPrevEl.src = dataUrl;
+            thumbPrevEl.hidden = false;
+          }
+          thumbBoxEl?.classList.remove('is-empty');
           look.specs[sIdx].thumb = dataUrl;
         });
       });
@@ -2041,9 +2094,9 @@ class AdminCmsController {
         pieces: '3 chỉ tiêu',
         qualityStd: 'Đạt Chuẩn ISO 22000',
         specs: [
-          makeSpec('tatum-5-orbit-copy', 48, 28, '', true),
-          makeSpec('tshirt', 48, 58, '', true),
-          makeSpec('hoodie', 45, 90, '', true),
+          makeSpec('spec-target-grower', 48, 28, ''),
+          makeSpec('spec-age-grower', 48, 58, ''),
+          makeSpec('spec-nutri-high', 45, 90, ''),
         ],
       };
       this.workingLooks.push(newLook);
